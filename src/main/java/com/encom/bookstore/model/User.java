@@ -24,4 +24,8 @@ public class User {
 
     @Column(name = "deleted_at")
     private LocalDateTime timeOfRemoval;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Customer customer;
 }
