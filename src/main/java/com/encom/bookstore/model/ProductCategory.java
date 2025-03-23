@@ -9,11 +9,11 @@ import lombok.Setter;
 import java.util.Set;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "product_categories")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Role {
+public class ProductCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
@@ -22,8 +22,9 @@ public class Role {
     @Column(nullable = false)
     private String name;
 
-    private String description;
+    @Column(name = "parent_id")
+    private short parentId;
 
-    @ManyToMany(mappedBy = "roles")
-    Set<User> users;
+    @OneToMany(mappedBy = "productCategory")
+    private Set<Product> products;
 }

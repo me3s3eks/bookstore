@@ -30,7 +30,6 @@ public class Customer {
     private String email;
 
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "id")
+    @MapsId("id")
     private User user;
 }

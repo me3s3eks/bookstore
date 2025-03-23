@@ -9,11 +9,11 @@ import lombok.Setter;
 import java.util.Set;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "publishers")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Role {
+public class Publisher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
@@ -24,6 +24,6 @@ public class Role {
 
     private String description;
 
-    @ManyToMany(mappedBy = "roles")
-    Set<User> users;
+    @OneToMany(mappedBy = "publisher")
+    private Set<Product> products;
 }
