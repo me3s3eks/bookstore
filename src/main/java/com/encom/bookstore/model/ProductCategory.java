@@ -17,7 +17,7 @@ public class ProductCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
-    private short id;
+    private Short id;
 
     @Column(nullable = false)
     private String name;

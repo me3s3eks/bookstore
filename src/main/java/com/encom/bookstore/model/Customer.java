@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Customer {
     @Id
-    private int id;
+    private Long id;
 
     @Column(length = 50, nullable = false)
     private String name;

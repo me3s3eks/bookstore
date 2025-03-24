@@ -2,6 +2,7 @@ package com.encom.bookstore.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -13,9 +14,14 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "user_seq",
+            sequenceName = "users_sequence",
+            allocationSize = 10
+    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     @Setter(AccessLevel.NONE)
-    private int id;
+    private Long id;
 
     @Column(length = 255, nullable = false, unique = true)
     private String login;
