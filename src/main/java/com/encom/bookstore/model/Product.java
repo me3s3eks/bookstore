@@ -32,8 +32,11 @@ public class Product {
     @PrimaryKeyJoinColumn
     private Set<ProductVariant> productVariants;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String title;
+
+    @Column(length = 10000)
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
@@ -55,6 +58,7 @@ public class Product {
     @Column(name = "page_count", nullable = false)
     private short pageCount;
 
+    @Column(length = 500)
     private String series;
 
     @Column(nullable = false)

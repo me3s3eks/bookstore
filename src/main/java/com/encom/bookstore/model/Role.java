@@ -22,6 +22,7 @@ public class Role {
     @Column(nullable = false)
     private String name;
 
+    @Column(length = 10000)
     private String description;
 
     @ManyToMany(mappedBy = "roles")

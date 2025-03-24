@@ -19,9 +19,10 @@ public class Publisher {
     @Setter(AccessLevel.NONE)
     private Short id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String name;
 
+    @Column(length = 10000)
     private String description;
 
     @OneToMany(mappedBy = "publisher")
