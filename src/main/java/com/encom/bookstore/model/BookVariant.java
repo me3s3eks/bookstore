@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,16 +47,9 @@ public class BookVariant {
     @Column(name = "product_status", nullable = false)
     private AvailabilityStatus availabilityStatus;
 
-    @Column(name = "quantity_in_stock")
-    private int quantityInStock;
-
-    private int width; //value in millimeters
-
-    private int height; //value in millimeters
-
-    private int depth; //value in millimeters
-
-    private BigDecimal weight; //value in kilograms
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paper_book_properties_id")
+    private PaperBookProperties paperBookProperties;
 
     public boolean equals(final Object o) {
         if (o == this) return true;
