@@ -15,36 +15,39 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "authors")
 @Getter
 @Setter
 @ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(length = 10000)
-    private String description;
+    @Column(nullable = false, length = 50)
+    private String surname;
+
+    @Column(length = 3000)
+    private String about;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Role)) return false;
-        Role other = (Role) o;
+        if (!(o instanceof Author)) return false;
+        Author other = (Author) o;
         if (!other.canEqual(this)) return false;
         return id != null && id.equals(other.getId());
     }
 
     protected boolean canEqual(Object other) {
-        return other instanceof Role;
+        return other instanceof Author;
     }
 
     @Override

@@ -15,14 +15,14 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "book_categories")
 @Getter
 @Setter
 @ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class BookCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
@@ -31,20 +31,20 @@ public class Role {
     @Column(nullable = false)
     private String name;
 
-    @Column(length = 10000)
-    private String description;
+    @Column(name = "parent_id")
+    private Long parentId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Role)) return false;
-        Role other = (Role) o;
+        if (!(o instanceof BookCategory)) return false;
+        BookCategory other = (BookCategory) o;
         if (!other.canEqual(this)) return false;
         return id != null && id.equals(other.getId());
     }
 
     protected boolean canEqual(Object other) {
-        return other instanceof Role;
+        return other instanceof BookCategory;
     }
 
     @Override

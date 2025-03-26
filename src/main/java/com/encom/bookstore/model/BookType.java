@@ -1,6 +1,6 @@
 package com.encom.bookstore.model;
 
-public enum ProductType {
+public enum BookType {
     PAPER_BOOK,
     HARDCOVER_BOOK,
     EBOOK,
