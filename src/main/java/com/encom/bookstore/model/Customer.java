@@ -35,6 +35,10 @@ public class Customer {
 
     @Column(length = 50)
     @EqualsAndHashCode.Exclude
+    private String patronymic;
+
+    @Column(length = 50, nullable = false)
+    @EqualsAndHashCode.Exclude
     private String surname;
 
     @Column(name = "date_of_birth")
