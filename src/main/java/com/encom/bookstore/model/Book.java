@@ -64,37 +64,41 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private BookCategory bookCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id", nullable = false)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Publisher publisher;
 
-    @EqualsAndHashCode.Exclude
     @Column(nullable = false)
+    @EqualsAndHashCode.Exclude
     private int edition;
 
-    @EqualsAndHashCode.Exclude
     @Column(name = "publication_date", nullable = false)
+    @EqualsAndHashCode.Exclude
     private LocalDate publicationDate;
 
-    @EqualsAndHashCode.Exclude
     @Column(nullable = false)
+    @EqualsAndHashCode.Exclude
     private Language language;
 
-    @EqualsAndHashCode.Exclude
     @Column(name = "page_count", nullable = false)
+    @EqualsAndHashCode.Exclude
     private short pageCount;
 
-    @EqualsAndHashCode.Exclude
     @Column(length = 500)
+    @EqualsAndHashCode.Exclude
     private String series;
 
     @NaturalId
     @Column(nullable = false)
     private String isbn;
 
-    @EqualsAndHashCode.Exclude
     @Column(name = "deleted_at")
+    @EqualsAndHashCode.Exclude
     private LocalDateTime timeOfRemoval;
 }
