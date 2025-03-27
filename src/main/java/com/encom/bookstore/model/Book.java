@@ -56,7 +56,8 @@ public class Book {
     @JoinTable(
             name = "book_authors",
             joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "author_id"))
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<Author> authors;
