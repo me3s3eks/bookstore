@@ -88,14 +88,14 @@ public class Book {
 
     @Column(name = "page_count", nullable = false)
     @EqualsAndHashCode.Exclude
-    private short pageCount;
+    private int pageCount;
 
     @Column(length = 500)
     @EqualsAndHashCode.Exclude
     private String series;
 
     @NaturalId
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String isbn;
 
     @Column(name = "deleted_at")

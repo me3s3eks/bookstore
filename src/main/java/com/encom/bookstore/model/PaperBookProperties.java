@@ -54,14 +54,14 @@ public class PaperBookProperties {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Role)) return false;
-        Role other = (Role) o;
+        if (!(o instanceof PaperBookProperties)) return false;
+        PaperBookProperties other = (PaperBookProperties) o;
         if (!other.canEqual(this)) return false;
         return id != null && id.equals(other.getId());
     }
 
     protected boolean canEqual(Object other) {
-        return other instanceof Role;
+        return other instanceof PaperBookProperties;
     }
 
     @Override
