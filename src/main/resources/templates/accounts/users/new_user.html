@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bookstore&semi; новый пользователь</title>
+</head>
+<body>
+    <a data-th-href="@{/accounts/users}" data-th-utext="#{accounts.users.list.back_to_user_list}"></a>
+    <h1 data-th-text="#{accounts.users.new_user.title}"></h1>
+    <form method="post" data-th-action="@{/accounts/users/new-user}">
+        <label>
+            <span data-th-text="#{accounts.users.new_user.surname}"></span><br>
+            <input type="text" name="surname"><br>
+        </label>
+        <label>
+            <span data-th-text="#{accounts.users.new_user.name}"></span><br>
+            <input type="text" name="name"><br>
+        </label>
+        <label>
+            <span data-th-text="#{accounts.users.new_user.patronymic}"></span><br>
+            <input type="text" name="patronymic"><br>
+        </label>
+        <label>
+            <span data-th-text="#{accounts.users.new_user.date_of_birth}"></span><br>
+            <input type="date" name="dateOfBirth"><br>
+        </label>
+        <label>
+            <span data-th-text="#{accounts.users.new_user.email}"></span><br>
+            <input type="email" name="email"><br>
+        </label>
+        <label>
+            <span data-th-text="#{accounts.users.new_user.login}"></span><br>
+            <input type="text" name="login"><br>
+        </label>
+        <label>
+            <span data-th-text="#{accounts.users.new_user.password}"></span><br>
+            <input type="password" name="password"><br>
+        </label>
+        <button type="submit" data-th-text="#{accounts.users.new_user.create}"></button>
+    </form>
+</body>
+</html>
