@@ -40,9 +40,9 @@ public class DeliveryAddress {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @ToString.Exclude
-    private Customer customer;
+    private User user;
 
     @Column(length = 60, nullable = false)
     private String country;
