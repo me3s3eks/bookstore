@@ -16,4 +16,8 @@ public interface UserService {
                     String patronymic, String surname, LocalDate dateOfBirth, String email);
 
     Optional<User> findUser(long userId);
+
+    void updateUser(long userId, String surname, String name, String patronymic, LocalDate dateOfBirth);
+
+    void deleteUser(long id);
 }
