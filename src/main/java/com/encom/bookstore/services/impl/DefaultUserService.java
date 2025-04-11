@@ -1,5 +1,8 @@
 package com.encom.bookstore.services.impl;
 
+import com.encom.bookstore.dto.UserCreateDTO;
+import com.encom.bookstore.dto.UserUpdateDTO;
+import com.encom.bookstore.exceptions.UserNotFoundException;
 import com.encom.bookstore.model.User;
 import com.encom.bookstore.repositories.UserRepository;
 import com.encom.bookstore.services.UserService;
@@ -8,14 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class DefaultUserService implements UserService {
     private final UserRepository userRepository;
@@ -31,30 +31,30 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public User createUser(String login, String password, String name, String patronymic, String surname,
-                           LocalDate dateOfBirth, String email) {
-        return userRepository.save(new User(null, login, password, name, patronymic, surname, dateOfBirth, email, null, null));
+    @Transactional
+    public User createUser(UserCreateDTO userCreateDTO) {
+        return userRepository.save(new User(null, userCreateDTO.login(), userCreateDTO.password(), userCreateDTO.name(),
+                userCreateDTO.patronymic(), userCreateDTO.surname(), userCreateDTO.dateOfBirth(), userCreateDTO.email(),
+                null, null));
     }
 
     @Override
-    public Optional<User> findUser(long userId) {
-        return userRepository.findById(userId);
+    public User findUser(long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("" + userId));
     }
 
     @Override
-    public void updateUser(long userId, String surname, String name, String patronymic, LocalDate dateOfBirth) {
-        userRepository.findById(userId)
-                .ifPresentOrElse(user -> {
-                    user.setSurname(surname);
-                    user.setName(name);
-                    user.setPatronymic(patronymic);
-                    user.setDateOfBirth(dateOfBirth);
-                }, () -> {
-                    throw new NoSuchElementException("User not found");
-                });
+    @Transactional
+    public void updateUser(long userId, UserUpdateDTO userUpdateDTO) {
+        User user = findUser(userId);
+        user.setSurname(userUpdateDTO.surname());
+        user.setName(userUpdateDTO.name());
+        user.setPatronymic(userUpdateDTO.patronymic());
+        user.setDateOfBirth(userUpdateDTO.dateOfBirth());
     }
 
     @Override
+    @Transactional
     public void deleteUser(long id) {
         userRepository.deleteById(id);
     }

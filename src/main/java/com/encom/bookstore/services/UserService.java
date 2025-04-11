@@ -1,10 +1,10 @@
 package com.encom.bookstore.services;
 
+import com.encom.bookstore.dto.UserCreateDTO;
+import com.encom.bookstore.dto.UserUpdateDTO;
 import com.encom.bookstore.model.User;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
@@ -12,12 +12,11 @@ public interface UserService {
 
     List<User> findAllUsers();
 
-    User createUser(String login, String password, String name,
-                    String patronymic, String surname, LocalDate dateOfBirth, String email);
+    User createUser(UserCreateDTO userCreateDTO);
 
-    Optional<User> findUser(long userId);
+    User findUser(long userId);
 
-    void updateUser(long userId, String surname, String name, String patronymic, LocalDate dateOfBirth);
+    void updateUser(long userId, UserUpdateDTO userUpdateDTO);
 
     void deleteUser(long id);
 }

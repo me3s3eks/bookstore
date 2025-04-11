@@ -19,7 +19,7 @@ public class UserController {
 
     @ModelAttribute("user")
     public User addUserToModel(@PathVariable("userId") long userId) {
-        return userService.findUser(userId).orElseThrow();
+        return userService.findUser(userId);
     }
 
     @GetMapping
@@ -33,8 +33,8 @@ public class UserController {
     }
 
     @PostMapping("/edit")
-    public String updateUser(@ModelAttribute("user") User user, UserUpdateDTO updateDTO) {
-        userService.updateUser(user.getId(), updateDTO.surname(), updateDTO.name(), updateDTO.patronymic(), updateDTO.dateOfBirth());
+    public String updateUser(@ModelAttribute("user") User user, UserUpdateDTO userUpdateDTO) {
+        userService.updateUser(user.getId(), userUpdateDTO);
         return "redirect:/accounts/users/%d".formatted(user.getId());
     }
 

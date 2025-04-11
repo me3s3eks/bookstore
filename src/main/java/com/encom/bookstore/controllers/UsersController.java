@@ -35,8 +35,7 @@ public class UsersController {
 
     @PostMapping("/users/new-user")
     public String createUserAccount(UserCreateDTO userCreateDTO) {
-        User user = userService.createUser(userCreateDTO.login(), userCreateDTO.password(), userCreateDTO.name(), userCreateDTO.patronymic(), userCreateDTO.surname(),
-                userCreateDTO.dateOfBirth(), userCreateDTO.email());
+        User user = userService.createUser(userCreateDTO);
         return "redirect:/accounts/users/%d".formatted(user.getId());
     }
 }
