@@ -10,6 +10,10 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByLoginIgnoreCaseAndTimeOfRemovalNotNull(String login);
 
+    boolean existsByEmail(String email);
+
+    boolean existsByLogin(String login);
+
     /*@Modifying
     void updatePassword(String password);
 
