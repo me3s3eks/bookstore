@@ -20,6 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.NaturalId;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,6 +49,26 @@ public class User {
     @Column(nullable = false)
     @EqualsAndHashCode.Exclude
     private String password;
+
+    @Column(length = 50, nullable = false)
+    @EqualsAndHashCode.Exclude
+    private String name;
+
+    @Column(length = 50)
+    @EqualsAndHashCode.Exclude
+    private String patronymic;
+
+    @Column(length = 50, nullable = false)
+    @EqualsAndHashCode.Exclude
+    private String surname;
+
+    @Column(name = "date_of_birth")
+    @EqualsAndHashCode.Exclude
+    private LocalDate dateOfBirth;
+
+    @Column(length = 255, nullable = false, unique = true)
+    @NaturalId
+    private String email;
 
     @Column(name = "deleted_at")
     @EqualsAndHashCode.Exclude

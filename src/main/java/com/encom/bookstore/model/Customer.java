@@ -1,3 +1,4 @@
+/*
 package com.encom.bookstore.model;
 
 import jakarta.persistence.Column;
@@ -56,3 +57,4 @@ public class Customer {
     @ToString.Exclude
     private User user;
 }
+*/
