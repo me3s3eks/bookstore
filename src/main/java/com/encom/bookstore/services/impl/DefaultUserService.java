@@ -33,8 +33,8 @@ public class DefaultUserService implements UserService {
     @Override
     @Transactional
     public User createUser(UserCreateDTO userCreateDTO) {
-        return userRepository.save(new User(null, userCreateDTO.login(), userCreateDTO.password(), userCreateDTO.name(),
-                userCreateDTO.patronymic(), userCreateDTO.surname(), userCreateDTO.dateOfBirth(), userCreateDTO.email(),
+        return userRepository.save(new User(null, userCreateDTO.getLogin(), userCreateDTO.getPassword(), userCreateDTO.getName(),
+                userCreateDTO.getPatronymic(), userCreateDTO.getSurname(), userCreateDTO.getDateOfBirth(), userCreateDTO.getEmail(),
                 null, null));
     }
 
@@ -47,10 +47,12 @@ public class DefaultUserService implements UserService {
     @Transactional
     public void updateUser(long userId, UserUpdateDTO userUpdateDTO) {
         User user = findUser(userId);
-        user.setSurname(userUpdateDTO.surname());
-        user.setName(userUpdateDTO.name());
-        user.setPatronymic(userUpdateDTO.patronymic());
-        user.setDateOfBirth(userUpdateDTO.dateOfBirth());
+        user.setSurname(userUpdateDTO.getSurname());
+        user.setName(userUpdateDTO.getName());
+        user.setPatronymic(userUpdateDTO.getPatronymic());
+        user.setDateOfBirth(userUpdateDTO.getDateOfBirth());
+        user.setEmail(userUpdateDTO.getEmail());
+        user.setLogin(userUpdateDTO.getLogin());
     }
 
     @Override
@@ -58,6 +60,8 @@ public class DefaultUserService implements UserService {
     public void deleteUser(long id) {
         userRepository.deleteById(id);
     }
+
+
 
     /*public User createUser(String login) {
         User user = User.builder().login(login).password("123456").build();
