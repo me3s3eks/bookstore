@@ -1,7 +1,7 @@
 package com.encom.bookstore.dto;
 
-import com.encom.bookstore.validators.UniqueUserEmail;
-import com.encom.bookstore.validators.UniqueUserLogin;
+import com.encom.bookstore.constraints.UniqueUserEmail;
+import com.encom.bookstore.constraints.UniqueUserLogin;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,12 +35,10 @@ public class UserUpdateDTO {
 
     @NotNull(message = "{accounts.users.user.edit.errors.field_is_null}")
     @Size(max = 255, message = "{accounts.users.user.edit.errors.field_is_blank}")
-    @Email
-//    @UniqueUserEmail(message = "{accounts.users.edit.errors.email_not_unique}")
+    @Email(message = "{accounts.users.user.edit.errors.email_is_invalid}")
     private String email;
 
     @NotBlank(message = "{accounts.users.user.edit.errors.field_is_blank}")
     @Size(max = 255, message = "{accounts.users.user.edit.errors.field_is_blank}")
-//    @UniqueUserLogin(message = "{accounts.users.edit.errors.login_not_unique}")
     private String login;
 }

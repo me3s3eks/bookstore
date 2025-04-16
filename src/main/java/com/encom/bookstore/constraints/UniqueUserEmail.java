@@ -1,5 +1,6 @@
-package com.encom.bookstore.validators;
+package com.encom.bookstore.constraints;
 
+import com.encom.bookstore.validators.UniqueUserEmailValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -8,11 +9,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = UniqueUserLoginValidator.class)
+@Constraint(validatedBy = UniqueUserEmailValidator.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UniqueUserLogin {
-    String message() default "Login is already used";
+public @interface UniqueUserEmail {
+    String message() default "Email is already used by another user";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

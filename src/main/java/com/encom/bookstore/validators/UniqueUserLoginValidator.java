@@ -1,5 +1,6 @@
 package com.encom.bookstore.validators;
 
+import com.encom.bookstore.constraints.UniqueUserLogin;
 import com.encom.bookstore.repositories.UserRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

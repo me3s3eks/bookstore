@@ -13,54 +13,54 @@
             <span data-th-text="#{accounts.users.user.edit.surname}"></span><br>
             <input type="text" name="surname" data-th-value="${userUpdateDTO.surname} ?: ${user.surname}"><br>
         </label>
-        <div data-th-if="${#fields.hasErrors('surname')}" class="error">
+        <div data-th-if="${constraintsViolations?.containsKey('surname')}" class="error">
             <ul>
-                <li data-th-each="error : ${#fields.errors('surname')}" data-th-text="${error}"></li>
+                <li data-th-each="error : ${constraintsViolations.get('surname')}" data-th-text="${error}"></li>
             </ul>
         </div>
         <label>
             <span data-th-text="#{accounts.users.user.edit.name}"></span><br>
             <input type="text" name="name" data-th-value="${userUpdateDTO.name} ?: ${user.name}"><br>
         </label>
-        <div data-th-if="${#fields.hasErrors('name')}" class="error">
+        <div data-th-if="${constraintsViolations?.containsKey('name')}" class="error">
             <ul>
-                <li data-th-each="error : ${#fields.errors('name')}" data-th-text="${error}"></li>
+                <li data-th-each="error : ${constraintsViolations.get('name')}" data-th-text="${error}"></li>
             </ul>
         </div>
         <label>
             <span data-th-text="#{accounts.users.user.edit.patronymic}"></span><br>
             <input type="text" name="patronymic" data-th-value="${userUpdateDTO.patronymic} ?: ${user.patronymic}"><br>
         </label>
-        <div data-th-if="${#fields.hasErrors('patronymic')}" class="error">
+        <div data-th-if="${constraintsViolations?.containsKey('patronymic')}" class="error">
             <ul>
-                <li data-th-each="error : ${#fields.errors('patronymic')}" data-th-text="${error}"></li>
+                <li data-th-each="error : ${constraintsViolations.get('patronymic')}" data-th-text="${error}"></li>
             </ul>
         </div>
         <label>
             <span data-th-text="#{accounts.users.user.edit.date_of_birth}"></span><br>
             <input type="date" name="dateOfBirth" data-th-value="${userUpdateDTO.dateOfBirth} ?: ${user.dateOfBirth}"><br>
         </label>
-        <div data-th-if="${#fields.hasErrors('dateOfBirth')}" class="error">
+        <div data-th-if="${constraintsViolations?.containsKey('dateOfBirth')}" class="error">
             <ul>
-                <li data-th-each="error : ${#fields.errors('dateOfBirth')}" data-th-text="${error}"></li>
+                <li data-th-each="error : ${constraintsViolations.get('dateOfBirth')}" data-th-text="${error}"></li>
             </ul>
         </div>
         <label>
             <span data-th-text="#{accounts.users.user.edit.email}"></span><br>
             <input type="text" name="email" data-th-value="${userUpdateDTO.email} ?: ${user.email}"><br>
         </label>
-        <div data-th-if="${#fields.hasErrors('email')}" class="error">
+        <div data-th-if="${constraintsViolations?.containsKey('email')}" class="error">
             <ul>
-                <li data-th-each="error : ${#fields.errors('email')}" data-th-text="${error}"></li>
+                <li data-th-each="error : ${constraintsViolations.get('email')}" data-th-text="${error}"></li>
             </ul>
         </div>
         <label>
             <span data-th-text="#{accounts.users.user.edit.login}"></span><br>
             <input type="text" name="login" data-th-value="${userUpdateDTO.login} ?: ${user.login}"><br>
         </label>
-        <div data-th-if="${#fields.hasErrors('login')}" class="error">
+        <div data-th-if="${constraintsViolations?.containsKey('login')}" class="error">
             <ul>
-                <li data-th-each="error : ${#fields.errors('login')}" data-th-text="${error}"></li>
+                <li data-th-each="error : ${constraintsViolations.get('login')}" data-th-text="${error}"></li>
             </ul>
         </div>
         <button type="submit" data-th-text="#{accounts.users.user.edit}"></button>

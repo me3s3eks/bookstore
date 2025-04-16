@@ -3,15 +3,25 @@ package com.encom.bookstore.services.impl;
 import com.encom.bookstore.dto.UserCreateDTO;
 import com.encom.bookstore.dto.UserUpdateDTO;
 import com.encom.bookstore.exceptions.UserNotFoundException;
+import com.encom.bookstore.mappers.UserMapper;
 import com.encom.bookstore.model.User;
 import com.encom.bookstore.repositories.UserRepository;
 import com.encom.bookstore.services.UserService;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -19,6 +29,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DefaultUserService implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final Validator validator;
+    private final MessageSource messageSource;
 
    /* @Override
     public void createUser(String login) {
@@ -33,9 +46,8 @@ public class DefaultUserService implements UserService {
     @Override
     @Transactional
     public User createUser(UserCreateDTO userCreateDTO) {
-        return userRepository.save(new User(null, userCreateDTO.getLogin(), userCreateDTO.getPassword(), userCreateDTO.getName(),
-                userCreateDTO.getPatronymic(), userCreateDTO.getSurname(), userCreateDTO.getDateOfBirth(), userCreateDTO.getEmail(),
-                null, null));
+        User newUser = userMapper.userCreateDTOtoUser(userCreateDTO);
+        return userRepository.save(newUser);
     }
 
     @Override
@@ -45,14 +57,15 @@ public class DefaultUserService implements UserService {
 
     @Override
     @Transactional
-    public void updateUser(long userId, UserUpdateDTO userUpdateDTO) {
+    public void updateUser(long userId, UserUpdateDTO userUpdateDTO, Model model, Locale locale) {
         User user = findUser(userId);
-        user.setSurname(userUpdateDTO.getSurname());
-        user.setName(userUpdateDTO.getName());
-        user.setPatronymic(userUpdateDTO.getPatronymic());
-        user.setDateOfBirth(userUpdateDTO.getDateOfBirth());
-        user.setEmail(userUpdateDTO.getEmail());
-        user.setLogin(userUpdateDTO.getLogin());
+        Map<String, List<String>> constraintsViolations = validateUserUpdateDTO(user, userUpdateDTO, locale);
+        if (constraintsViolations.isEmpty()) {
+            userMapper.updateUserFromUserUpdateDTO(userUpdateDTO, user);
+            userRepository.save(user);
+        } else {
+            model.addAttribute("constraintsViolations", constraintsViolations);
+        }
     }
 
     @Override
@@ -61,6 +74,24 @@ public class DefaultUserService implements UserService {
         userRepository.deleteById(id);
     }
 
+    private Map<String, List<String>> validateUserUpdateDTO(User user, UserUpdateDTO userUpdateDTO, Locale locale) {
+        Set<ConstraintViolation<UserUpdateDTO>> constraintsViolations = validator.validate(userUpdateDTO);
+        Map<String, List<String>> constraintsViolationsMap = new HashMap<>();
+        constraintsViolations.stream()
+                .forEach(constraintViolation ->
+                constraintsViolationsMap.computeIfAbsent(constraintViolation.getPropertyPath().toString(),
+                        k -> new ArrayList<>()).add(constraintViolation.getMessage()));
+
+        if (!user.getLogin().equals(userUpdateDTO.getLogin()) && userRepository.existsByLogin(userUpdateDTO.getLogin())) {
+            constraintsViolationsMap.computeIfAbsent("login",
+                    k -> new ArrayList<>()).add(messageSource.getMessage("accounts.users.edit.errors.login_not_unique", null, locale));
+        }
+        if (!user.getEmail().equals(userUpdateDTO.getEmail()) && userRepository.existsByEmailIgnoreCase(userUpdateDTO.getEmail())) {
+            constraintsViolationsMap.computeIfAbsent("email",
+                    k -> new ArrayList<>()).add(messageSource.getMessage("accounts.users.edit.errors.email_not_unique", null, locale));
+        }
+        return constraintsViolationsMap;
+    }
 
 
     /*public User createUser(String login) {

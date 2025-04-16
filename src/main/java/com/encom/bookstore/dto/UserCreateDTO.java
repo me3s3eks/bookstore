@@ -1,7 +1,7 @@
 package com.encom.bookstore.dto;
 
-import com.encom.bookstore.validators.UniqueUserEmail;
-import com.encom.bookstore.validators.UniqueUserLogin;
+import com.encom.bookstore.constraints.UniqueUserEmail;
+import com.encom.bookstore.constraints.UniqueUserLogin;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

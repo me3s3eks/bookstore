@@ -1,6 +1,6 @@
 package com.encom.bookstore.validators;
 
-import com.encom.bookstore.model.User;
+import com.encom.bookstore.constraints.UniqueUserEmail;
 import com.encom.bookstore.repositories.UserRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -14,6 +14,6 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return !userRepository.existsByEmail(value);
+        return !userRepository.existsByEmailIgnoreCase(value);
     }
 }
