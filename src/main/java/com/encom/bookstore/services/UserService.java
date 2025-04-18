@@ -10,8 +10,6 @@ import java.util.Locale;
 
 public interface UserService {
 
-//    void createUser(String login);
-
     List<User> findAllUsers();
 
     User createUser(UserCreateDTO userCreateDTO);
