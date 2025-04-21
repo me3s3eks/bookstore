@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreateDTO {
+public class UserCreateDto {
         @NotBlank(message = "{accounts.users.new_user.errors.field_is_blank}")
         @Size(max = 50, message = "{accounts.users.new_user.errors.field_size_over_max}")
         private String surname;

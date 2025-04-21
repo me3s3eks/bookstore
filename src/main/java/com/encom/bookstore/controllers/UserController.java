@@ -1,6 +1,6 @@
 package com.encom.bookstore.controllers;
 
-import com.encom.bookstore.dto.UserUpdateDTO;
+import com.encom.bookstore.dto.UserUpdateDto;
 import com.encom.bookstore.model.User;
 import com.encom.bookstore.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,16 +32,16 @@ public class UserController {
 
     @GetMapping("/edit")
     public String getUserEditPage(Model model) {
-        model.addAttribute("userUpdateDTO", new UserUpdateDTO());
+        model.addAttribute("userUpdateDto", new UserUpdateDto());
         return "accounts/users/edit";
     }
 
     @PostMapping("/edit")
     public String updateUser(@ModelAttribute(value = "user", binding = false) User user,
-                             @ModelAttribute("userUpdateDTO") UserUpdateDTO userUpdateDTO,
+                             @ModelAttribute("userUpdateDto") UserUpdateDto userUpdateDto,
                              Model model,
                              Locale locale) {
-        userService.updateUser(user.getId(), userUpdateDTO, model, locale);
+        userService.updateUser(user.getId(), userUpdateDto, model, locale);
         if (model.containsAttribute("constraintsViolations")) {
             return "accounts/users/edit";
         }

@@ -1,7 +1,5 @@
 package com.encom.bookstore.dto;
 
-import com.encom.bookstore.constraints.UniqueUserEmail;
-import com.encom.bookstore.constraints.UniqueUserLogin;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +14,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserUpdateDTO {
+public class UserUpdateDto {
     @NotBlank(message = "{accounts.users.user.edit.errors.field_is_blank}")
     @Size(max = 50, message = "{accounts.users.user.edit.errors.field_is_blank}")
     private String surname;

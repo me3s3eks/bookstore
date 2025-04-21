@@ -1,7 +1,7 @@
 package com.encom.bookstore.services.impl;
 
-import com.encom.bookstore.dto.UserCreateDTO;
-import com.encom.bookstore.dto.UserUpdateDTO;
+import com.encom.bookstore.dto.UserCreateDto;
+import com.encom.bookstore.dto.UserUpdateDto;
 import com.encom.bookstore.exceptions.UserNotFoundException;
 import com.encom.bookstore.mappers.UserMapper;
 import com.encom.bookstore.model.User;
@@ -45,8 +45,8 @@ public class DefaultUserService implements UserService {
 
     @Override
     @Transactional
-    public User createUser(UserCreateDTO userCreateDTO) {
-        User newUser = userMapper.userCreateDTOtoUser(userCreateDTO);
+    public User createUser(UserCreateDto userCreateDto) {
+        User newUser = userMapper.userCreateDtoToUser(userCreateDto);
         return userRepository.save(newUser);
     }
 
@@ -57,11 +57,11 @@ public class DefaultUserService implements UserService {
 
     @Override
     @Transactional
-    public void updateUser(long userId, UserUpdateDTO userUpdateDTO, Model model, Locale locale) {
+    public void updateUser(long userId, UserUpdateDto userUpdateDto, Model model, Locale locale) {
         User user = findUser(userId);
-        Map<String, List<String>> constraintsViolations = validateUserUpdateDTO(user, userUpdateDTO, locale);
+        Map<String, List<String>> constraintsViolations = validateUserUpdateDto(user, userUpdateDto, locale);
         if (constraintsViolations.isEmpty()) {
-            userMapper.updateUserFromUserUpdateDTO(userUpdateDTO, user);
+            userMapper.updateUserFromUserUpdateDto(userUpdateDto, user);
             userRepository.save(user);
         } else {
             model.addAttribute("constraintsViolations", constraintsViolations);
@@ -74,19 +74,19 @@ public class DefaultUserService implements UserService {
         userRepository.deleteById(id);
     }
 
-    private Map<String, List<String>> validateUserUpdateDTO(User user, UserUpdateDTO userUpdateDTO, Locale locale) {
-        Set<ConstraintViolation<UserUpdateDTO>> constraintsViolations = validator.validate(userUpdateDTO);
+    private Map<String, List<String>> validateUserUpdateDto(User user, UserUpdateDto userUpdateDto, Locale locale) {
+        Set<ConstraintViolation<UserUpdateDto>> constraintsViolations = validator.validate(userUpdateDto);
         Map<String, List<String>> constraintsViolationsMap = new HashMap<>();
         constraintsViolations.stream()
                 .forEach(constraintViolation ->
                 constraintsViolationsMap.computeIfAbsent(constraintViolation.getPropertyPath().toString(),
                         k -> new ArrayList<>()).add(constraintViolation.getMessage()));
 
-        if (!user.getLogin().equals(userUpdateDTO.getLogin()) && userRepository.existsByLogin(userUpdateDTO.getLogin())) {
+        if (!user.getLogin().equals(userUpdateDto.getLogin()) && userRepository.existsByLogin(userUpdateDto.getLogin())) {
             constraintsViolationsMap.computeIfAbsent("login",
                     k -> new ArrayList<>()).add(messageSource.getMessage("accounts.users.edit.errors.login_not_unique", null, locale));
         }
-        if (!user.getEmail().equals(userUpdateDTO.getEmail()) && userRepository.existsByEmailIgnoreCase(userUpdateDTO.getEmail())) {
+        if (!user.getEmail().equals(userUpdateDto.getEmail()) && userRepository.existsByEmailIgnoreCase(userUpdateDto.getEmail())) {
             constraintsViolationsMap.computeIfAbsent("email",
                     k -> new ArrayList<>()).add(messageSource.getMessage("accounts.users.edit.errors.email_not_unique", null, locale));
         }

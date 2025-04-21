@@ -1,7 +1,7 @@
 package com.encom.bookstore.services;
 
-import com.encom.bookstore.dto.UserCreateDTO;
-import com.encom.bookstore.dto.UserUpdateDTO;
+import com.encom.bookstore.dto.UserCreateDto;
+import com.encom.bookstore.dto.UserUpdateDto;
 import com.encom.bookstore.model.User;
 import org.springframework.ui.Model;
 
@@ -12,11 +12,11 @@ public interface UserService {
 
     List<User> findAllUsers();
 
-    User createUser(UserCreateDTO userCreateDTO);
+    User createUser(UserCreateDto userCreateDto);
 
     User findUser(long userId);
 
-    void updateUser(long userId, UserUpdateDTO userUpdateDTO, Model model, Locale locale);
+    void updateUser(long userId, UserUpdateDto userUpdateDto, Model model, Locale locale);
 
     void deleteUser(long id);
 }
