@@ -29,11 +29,11 @@ public class Publisher {
     private Long id;
 
     @Column(nullable = false, length = 500)
-    @NaturalId
+    @NaturalId(mutable = true)
     private String name;
 
     @Column(nullable = false)
-    @NaturalId
+    @NaturalId(mutable = true)
     private Country country;
 
     @Column(length = 10000)

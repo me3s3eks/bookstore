@@ -43,7 +43,7 @@ public class User {
     private Long id = null;
 
     @Column(length = 255, nullable = false, unique = true)
-    @NaturalId
+    @NaturalId(mutable = true)
     private String login;
 
     @Column(nullable = false)
@@ -67,7 +67,7 @@ public class User {
     private LocalDate dateOfBirth;
 
     @Column(length = 255, nullable = false, unique = true)
-    @NaturalId
+    @NaturalId(mutable = true)
     private String email;
 
     @Column(name = "deleted_at")

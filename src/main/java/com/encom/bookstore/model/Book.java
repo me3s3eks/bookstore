@@ -94,7 +94,7 @@ public class Book {
     @EqualsAndHashCode.Exclude
     private String series;
 
-    @NaturalId
+    @NaturalId(mutable = true)
     @Column(nullable = false, unique = true)
     private String isbn;
 
