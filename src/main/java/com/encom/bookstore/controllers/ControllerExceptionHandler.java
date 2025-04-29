@@ -14,6 +14,7 @@ import java.util.Locale;
 @ControllerAdvice
 @RequiredArgsConstructor
 public class ControllerExceptionHandler {
+
     private final MessageSource messageSource;
 
     @ExceptionHandler(UserNotFoundException.class)

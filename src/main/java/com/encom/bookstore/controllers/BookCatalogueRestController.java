@@ -22,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/catalogue/books")
 @RequiredArgsConstructor
 public class BookCatalogueRestController {
+
     private final BookCatalogueService bookCatalogueService;
 
     @GetMapping

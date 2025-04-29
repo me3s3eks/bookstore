@@ -8,6 +8,7 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AuthorMapper {
+
     AuthorBaseInfoDto authorToAuthorBaseInfoDto(Author author);
 
     AuthorDto authorToAuthorDto(Author author);

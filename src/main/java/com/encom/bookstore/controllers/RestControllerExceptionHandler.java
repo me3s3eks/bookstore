@@ -3,8 +3,6 @@ package com.encom.bookstore.controllers;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +17,7 @@ import java.util.Locale;
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class RestControllerExceptionHandler {
+
     private final MessageSource messageSource;
 
     @ExceptionHandler(BindException.class)
