@@ -6,13 +6,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record BookBaseInfoDto(
+public record BookDto(
     long id,
     String title,
+    String description,
+    List<AuthorBaseInfoDto> authors,
+    BookCategoryDto bookCategory,
+    PublisherBaseInfoDto publisher,
     int edition,
     LocalDate publicationDate,
     Language language,
+    int pageCount,
+    String series,
     String isbn,
-    List<AuthorBaseInfoDto> authors,
     LocalDateTime timeOfRemoval) {
 }

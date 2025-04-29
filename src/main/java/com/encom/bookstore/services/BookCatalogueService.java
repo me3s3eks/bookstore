@@ -7,7 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BookCatalogueService {
-    Page<BookBaseInfoDto> findAllBooks(Pageable pageable);
 
     BookDto createBook(BookCreateDto bookCreateDto);
+
+    Page<BookBaseInfoDto> findAllBooks(Pageable pageable);
 }
