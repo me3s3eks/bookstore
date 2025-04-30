@@ -20,9 +20,9 @@ public interface BookService {
 
     void deleteBook(long bookId);
 
-    void updateBook(long bookId, BookUpdateDto bookUpdateDto);
-
     void restoreBook(long bookId);
+
+    void updateBook(long bookId, BookUpdateDto bookUpdateDto);
 }
 
 

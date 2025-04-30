@@ -84,6 +84,16 @@ public class DefaultBookService implements BookService {
 
     @Override
     @Transactional
+    public void restoreBook(long bookId) {
+        Book book = getBook(bookId);
+        if (book.getTimeOfRemoval() != null) {
+            book.setTimeOfRemoval(null);
+        }
+        bookRepository.save(book);
+    }
+
+    @Override
+    @Transactional
     public void updateBook(long bookId, BookUpdateDto bookUpdateDto) {
         Book updatedBook = bookRepository.findById(bookId).orElseThrow(
             () -> new EntityNotFoundException("Book", Set.of(bookId))
@@ -93,15 +103,6 @@ public class DefaultBookService implements BookService {
         bookRepository.save(updatedBook);
     }
 
-    @Override
-    @Transactional
-    public void restoreBook(long bookId) {
-        Book book = getBook(bookId);
-        if (book.getTimeOfRemoval() != null) {
-            book.setTimeOfRemoval(null);
-        }
-        bookRepository.save(book);
-    }
 
     private Book addRelatedEntities(Book book, BookCreateDto bookCreateDto) {
         List<Author> authors = authorService.getAuthors(bookCreateDto.authorsIds());
