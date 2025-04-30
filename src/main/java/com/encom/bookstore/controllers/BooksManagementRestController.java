@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/management/catalogue/books/")
+@RequestMapping("/management/catalogue/books")
 public class BooksManagementRestController {
 
     private final BookService bookService;
