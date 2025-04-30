@@ -1,5 +1,7 @@
 package com.encom.bookstore.services.impl;
 
+import com.encom.bookstore.dto.BookBaseInfoDto;
+import com.encom.bookstore.dto.BookCreateDto;
 import com.encom.bookstore.dto.BookDto;
 import com.encom.bookstore.dto.BookUpdateDto;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
@@ -15,6 +17,9 @@ import com.encom.bookstore.services.BookService;
 import com.encom.bookstore.services.PublisherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +45,27 @@ public class DefaultBookService implements BookService {
     private final PublisherService publisherService;
 
     @Override
+    @Transactional
+    public BookDto createBook(BookCreateDto bookCreateDto) {
+        Book book = bookMapper.bookCreateDtoToBook(bookCreateDto);
+        addRelatedEntities(book, bookCreateDto);
+        book = bookRepository.save(book);
+        return bookMapper.bookToBookDto(book);
+    }
+
+    @Override
     public BookDto findBook(long bookId) {
         Book book = getBook(bookId);
         return bookMapper.bookToBookDto(book);
+    }
+
+    @Override
+    public Page<BookBaseInfoDto> findAllBooks(Pageable pageable) {
+        Page<Long> bookIds = bookRepository.findAllIds(pageable);
+        List<Book> books = bookRepository.findAllWithAuthorsByIdIn(bookIds.getContent());
+        long totalElements = bookRepository.count();
+        Page<Book> booksPage = new PageImpl<>(books, pageable, totalElements);
+        return booksPage.map(bookMapper::bookToBookBaseInfoDto);
     }
 
     @Override
@@ -78,6 +101,18 @@ public class DefaultBookService implements BookService {
             book.setTimeOfRemoval(null);
         }
         bookRepository.save(book);
+    }
+
+    private Book addRelatedEntities(Book book, BookCreateDto bookCreateDto) {
+        List<Author> authors = authorService.getAuthors(bookCreateDto.authorsIds());
+        BookCategory category = bookCategoryService.getBookCategory(bookCreateDto.bookCategoryId());
+        Publisher publisher = publisherService.getPublisher(bookCreateDto.publisherId());
+
+        book.setAuthors(authors);
+        book.setBookCategory(category);
+        book.setPublisher(publisher);
+
+        return book;
     }
 
     private Book updateRelatedEntities(Book book, BookUpdateDto bookUpdateDto) {
