@@ -22,6 +22,8 @@ public interface AuthorService {
 
     Page<AuthorBaseInfoDto> findAllAuthors(Pageable pageable);
 
+    Page<AuthorBaseInfoDto> findAllAuthorsByKeyword(Pageable pageable, String keyword);
+
     Author getAuthor(long authorId);
 
     List<Author> getAuthors(Set<Long> authorsIds);

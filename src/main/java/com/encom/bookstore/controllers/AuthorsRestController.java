@@ -19,19 +19,27 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("/management/catalogue/authors")
+@RequestMapping("/catalogue/authors")
 @RequiredArgsConstructor
-public class AuthorsManagementRestController {
+public class AuthorsRestController {
 
     private final AuthorService authorService;
 
     @GetMapping
-    public ResponseEntity<Page<AuthorBaseInfoDto>> getAllAuthors(Pageable pageable) {
-        Page<AuthorBaseInfoDto> authorPage = authorService.findAllAuthors(pageable);
+        public ResponseEntity<Page<AuthorBaseInfoDto>> getAllAuthors(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            Pageable pageable) {
+        Page<AuthorBaseInfoDto> authorPage = null;
+        if (keyword == null) {
+            authorPage = authorService.findAllAuthors(pageable);
+        } else {
+            authorPage = authorService.findAllAuthorsByKeyword(pageable, keyword);
+        }
         return ResponseEntity.ok(authorPage);
     }
 

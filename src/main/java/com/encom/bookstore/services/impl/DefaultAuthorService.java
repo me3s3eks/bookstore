@@ -61,6 +61,12 @@ public class DefaultAuthorService implements AuthorService {
     }
 
     @Override
+    public Page<AuthorBaseInfoDto> findAllAuthorsByKeyword(Pageable pageable, String keyword) {
+        Page<Author> auhotrsPage = authorRepository.findAllByKeyword(pageable, keyword);
+        return auhotrsPage.map(authorMapper::authorToAuthorBaseInfoDto);
+    }
+
+    @Override
     public Author getAuthor(long authorId) {
         return authorRepository.findById(authorId)
             .orElseThrow(() -> new EntityNotFoundException("Author",
