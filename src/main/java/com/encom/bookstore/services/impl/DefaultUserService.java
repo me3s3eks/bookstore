@@ -12,6 +12,7 @@ import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -28,15 +29,12 @@ import java.util.Set;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class DefaultUserService implements UserService {
+
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final Validator validator;
     private final MessageSource messageSource;
-
-   /* @Override
-    public void createUser(String login) {
-
-    }*/
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> findAllUsers() {
@@ -47,6 +45,8 @@ public class DefaultUserService implements UserService {
     @Transactional
     public User createUser(UserCreateDto userCreateDto) {
         User newUser = userMapper.userCreateDtoToUser(userCreateDto);
+        String passwordHash = passwordEncoder.encode(userCreateDto.getPassword());
+        newUser.setPassword(passwordHash);
         return userRepository.save(newUser);
     }
 
@@ -92,21 +92,4 @@ public class DefaultUserService implements UserService {
         }
         return constraintsViolationsMap;
     }
-
-
-    /*public User createUser(String login) {
-        User user = User.builder().login(login).password("123456").build();
-        return userRepository.save(user);
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public Page<User> getPageWithUsers(int pageNumber, int pageSize, String sortField, String sortDirection) {
-        Sort sortOptions = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() : Sort.by(sortField);
-
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortOptions);
-        return userRepository.findAll(pageable);
-    }*/
 }
