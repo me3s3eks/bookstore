@@ -25,4 +25,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> findWithAllRelatedEntitiesById(long id);
 
     boolean existsByAuthorsId(long id);
+
+    boolean existsByBookCategoryId(long id);
 }

@@ -1,13 +1,19 @@
 package com.encom.bookstore.services.impl;
 
+import com.encom.bookstore.dto.BookCategoryCreateDto;
 import com.encom.bookstore.dto.BookCategoryDto;
+import com.encom.bookstore.dto.BookCategoryUpdateDto;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
+import com.encom.bookstore.exceptions.ForeignKeyDeleteConstraintException;
 import com.encom.bookstore.mappers.BookCategoryMapper;
 import com.encom.bookstore.model.BookCategory;
 import com.encom.bookstore.repositories.BookCategoryRepository;
+import com.encom.bookstore.repositories.BookRepository;
 import com.encom.bookstore.services.BookCategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +27,17 @@ public class DefaultBookCategoryService implements BookCategoryService {
 
     private final BookCategoryRepository bookCategoryRepository;
 
+    private final BookRepository bookRepository;
+
     private final BookCategoryMapper bookCategoryMapper;
+
+    @Override
+    @Transactional
+    public BookCategoryDto createBookCategory(BookCategoryCreateDto bookCategoryCreateDto) {
+        BookCategory bookCategory = bookCategoryMapper.bookCategoryCreateDtoToBookCategory(bookCategoryCreateDto);
+        bookCategoryRepository.save(bookCategory);
+        return bookCategoryMapper.bookCategoryToBookCategoryDto(bookCategory);
+    }
 
     @Override
     public BookCategoryDto findBookCategory(long categoryId) {
@@ -30,9 +46,42 @@ public class DefaultBookCategoryService implements BookCategoryService {
     }
 
     @Override
+    public Page<BookCategoryDto> findAllBookCategories(Pageable pageable) {
+        Page<BookCategory> bookCategoriesPage = bookCategoryRepository.findAll(pageable);
+        return bookCategoriesPage.map(bookCategoryMapper::bookCategoryToBookCategoryDto);
+    }
+
+    @Override
+    public Page<BookCategoryDto> findAllBookCategoriesByKeyword(Pageable pageable, String keyword) {
+        Page<BookCategory> bookCategoriesPage = bookCategoryRepository.findAllByKeyword(pageable, keyword);
+        return bookCategoriesPage.map(bookCategoryMapper::bookCategoryToBookCategoryDto);
+    }
+
+    @Override
     public BookCategory getBookCategory(long categoryId) {
         return bookCategoryRepository.findById(categoryId)
             .orElseThrow(() -> new EntityNotFoundException("BookCategory",
                 Set.of(categoryId)));
+    }
+
+    @Override
+    @Transactional
+    public void deleteBookCategory(long categoryId) {
+        BookCategory bookCategory = getBookCategory(categoryId);
+        if (bookCategoryRepository.existsByParentId(categoryId)) {
+            throw new ForeignKeyDeleteConstraintException("BookCategory");
+        }
+        if (bookRepository.existsByBookCategoryId(categoryId)) {
+            throw new ForeignKeyDeleteConstraintException("Book");
+        }
+        bookCategoryRepository.delete(bookCategory);
+    }
+
+    @Override
+    @Transactional
+    public void updateBookCategory(long categoryId, BookCategoryUpdateDto bookCategoryUpdateDto) {
+        BookCategory bookCategory = getBookCategory(categoryId);
+        bookCategoryMapper.bookCategoryUpdateDtoToBookCategory(bookCategoryUpdateDto, bookCategory);
+        bookCategoryRepository.save(bookCategory);
     }
 }
