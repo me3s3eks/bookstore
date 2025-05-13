@@ -4,9 +4,11 @@ import com.encom.bookstore.dto.BookCategoryCreateDto;
 import com.encom.bookstore.dto.BookCategoryDto;
 import com.encom.bookstore.dto.BookCategoryUpdateDto;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
+import com.encom.bookstore.exceptions.ForeignKeyDeleteConstraintException;
 import com.encom.bookstore.mappers.BookCategoryMapper;
 import com.encom.bookstore.model.BookCategory;
 import com.encom.bookstore.repositories.BookCategoryRepository;
+import com.encom.bookstore.repositories.BookRepository;
 import com.encom.bookstore.services.BookCategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,8 @@ import java.util.Set;
 public class DefaultBookCategoryService implements BookCategoryService {
 
     private final BookCategoryRepository bookCategoryRepository;
+
+    private final BookRepository bookRepository;
 
     private final BookCategoryMapper bookCategoryMapper;
 
@@ -58,6 +62,19 @@ public class DefaultBookCategoryService implements BookCategoryService {
         return bookCategoryRepository.findById(categoryId)
             .orElseThrow(() -> new EntityNotFoundException("BookCategory",
                 Set.of(categoryId)));
+    }
+
+    @Override
+    @Transactional
+    public void deleteBookCategory(long categoryId) {
+        BookCategory bookCategory = getBookCategory(categoryId);
+        if (bookCategoryRepository.existsByParentId(categoryId)) {
+            throw new ForeignKeyDeleteConstraintException("BookCategory");
+        }
+        if (bookRepository.existsByBookCategoryId(categoryId)) {
+            throw new ForeignKeyDeleteConstraintException("Book");
+        }
+        bookCategoryRepository.delete(bookCategory);
     }
 
     @Override

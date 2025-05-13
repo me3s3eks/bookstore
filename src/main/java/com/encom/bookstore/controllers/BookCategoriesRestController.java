@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -84,5 +85,11 @@ public class BookCategoriesRestController {
                bookCategoryService.updateBookCategory(categoryId, bookCategoryUpdateDto);
                return ResponseEntity.noContent().build();
         }
+    }
+
+    @DeleteMapping("/{categoryId:\\d+}")
+    public ResponseEntity<Void> deleteBookCategory(@PathVariable long categoryId) {
+        bookCategoryService.deleteBookCategory(categoryId);
+        return ResponseEntity.noContent().build();
     }
 }

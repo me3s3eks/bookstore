@@ -15,4 +15,6 @@ public interface BookCategoryRepository extends JpaRepository<BookCategory, Long
         LOWER(bc.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
         """)
     Page<BookCategory> findAllByKeyword(Pageable pageable, String keyword);
+
+    boolean existsByParentId(long id);
 }

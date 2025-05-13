@@ -20,5 +20,7 @@ public interface BookCategoryService {
 
     BookCategory getBookCategory(long categoryId);
 
+    void deleteBookCategory(long categoryId);
+
     void updateBookCategory(long categoryId, BookCategoryUpdateDto bookCategoryUpdateDto);
 }
