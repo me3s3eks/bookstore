@@ -24,16 +24,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/management/catalogue/books/")
+@RequestMapping("/management/catalogue/books")
 public class BooksManagementRestController {
 
     private final BookService bookService;
-
-    @GetMapping
-    public ResponseEntity<Page<BookBaseInfoDto>> getAllBooks(Pageable pageable) {
-        Page<BookBaseInfoDto> bookPage = bookService.findAllBooks(pageable);
-        return ResponseEntity.ok(bookPage);
-    }
 
     @PostMapping
     public ResponseEntity<BookDto> createBook(@Valid @RequestBody BookCreateDto bookCreateDto,
@@ -54,6 +48,12 @@ public class BooksManagementRestController {
                     .build(bookDto.id()))
                 .body(bookDto);
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<BookBaseInfoDto>> getAllBooks(Pageable pageable) {
+        Page<BookBaseInfoDto> bookPage = bookService.findAllBooks(pageable);
+        return ResponseEntity.ok(bookPage);
     }
 
     //~exclude negative id pattern (delete dash)
@@ -82,17 +82,16 @@ public class BooksManagementRestController {
     }
 
     //~exclude negative id pattern (delete dash)
-    @PostMapping("/{bookId:[-\\d]+}/restore")
-    public ResponseEntity<Void> restoreBook(@PathVariable long bookId) {
-        bookService.restoreBook(bookId);
-        return ResponseEntity.noContent().build();
-    }
-
-    //~exclude negative id pattern (delete dash)
     @DeleteMapping("/{bookId:[-\\d]+}")
     public ResponseEntity<Void> deleteBook(@PathVariable long bookId) {
         bookService.deleteBook(bookId);
         return ResponseEntity.noContent().build();
     }
 
+    //~exclude negative id pattern (delete dash)
+    @PostMapping("/{bookId:[-\\d]+}/restore")
+    public ResponseEntity<Void> restoreBook(@PathVariable long bookId) {
+        bookService.restoreBook(bookId);
+        return ResponseEntity.noContent().build();
+    }
 }

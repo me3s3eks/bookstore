@@ -1,6 +1,7 @@
 package com.encom.bookstore.controllers;
 
 import com.encom.bookstore.exceptions.EntityNotFoundException;
+import com.encom.bookstore.exceptions.ForeignKeyDeleteConstraintException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -51,9 +52,22 @@ public class RestControllerExceptionHandler {
             null, "errors.error.404.default", locale);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,
             localizedErrorMessage);
-        problemDetail.setProperty("entity", e.getEntityName());
-        problemDetail.setProperty("ids", e.getEntityIds());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(problemDetail);
+        problemDetail.setProperty("entityName", e.getEntityName());
+        problemDetail.setProperty("entityIds", e.getEntityIds());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
+    }
+
+    @ExceptionHandler(ForeignKeyDeleteConstraintException.class)
+    public ResponseEntity<ProblemDetail> handleForeignKeyDeleteConstraintException(
+        ForeignKeyDeleteConstraintException e,
+        Locale locale) {
+
+        String localizedMessage = messageSource.getMessage("errors.error.400." +
+                "foreign_key_delete_constraint_violation",
+            null, "errors.error.400.default", locale);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+            localizedMessage);
+        problemDetail.setProperty("dependentEntityName", e.getDependentEntityName());
+        return ResponseEntity.badRequest().body(problemDetail);
     }
 }
