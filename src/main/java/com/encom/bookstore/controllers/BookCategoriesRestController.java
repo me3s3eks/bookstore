@@ -2,6 +2,8 @@ package com.encom.bookstore.controllers;
 
 import com.encom.bookstore.dto.BookCategoryCreateDto;
 import com.encom.bookstore.dto.BookCategoryDto;
+import com.encom.bookstore.dto.BookCategoryUpdateDto;
+import com.encom.bookstore.mappers.BookCategoryMapper;
 import com.encom.bookstore.services.BookCategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class BookCategoriesRestController {
 
     private final BookCategoryService bookCategoryService;
+    private final BookCategoryMapper bookCategoryMapper;
 
     @PostMapping
     public ResponseEntity<BookCategoryDto> createBookCategory(
@@ -64,5 +68,21 @@ public class BookCategoriesRestController {
     public ResponseEntity<BookCategoryDto> getBookCategory(@PathVariable long categoryId) {
         BookCategoryDto bookCategoryDto = bookCategoryService.findBookCategory(categoryId);
         return ResponseEntity.ok(bookCategoryDto);
+    }
+
+    @PatchMapping("/{categoryId:\\d+}")
+    public ResponseEntity<Void> updateBookCategory(@PathVariable long categoryId,
+                                                   @Valid @RequestBody BookCategoryUpdateDto bookCategoryUpdateDto,
+                                                   BindingResult bindingResult) throws BindException {
+        if (bindingResult.hasErrors()) {
+            if (bindingResult instanceof BindException bindException) {
+                throw bindException;
+            } else {
+                throw new BindException(bindingResult);
+            }
+        } else {
+               bookCategoryService.updateBookCategory(categoryId, bookCategoryUpdateDto);
+               return ResponseEntity.noContent().build();
+        }
     }
 }

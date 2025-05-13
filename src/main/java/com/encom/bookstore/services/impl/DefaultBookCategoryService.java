@@ -2,6 +2,7 @@ package com.encom.bookstore.services.impl;
 
 import com.encom.bookstore.dto.BookCategoryCreateDto;
 import com.encom.bookstore.dto.BookCategoryDto;
+import com.encom.bookstore.dto.BookCategoryUpdateDto;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import com.encom.bookstore.mappers.BookCategoryMapper;
 import com.encom.bookstore.model.BookCategory;
@@ -57,5 +58,13 @@ public class DefaultBookCategoryService implements BookCategoryService {
         return bookCategoryRepository.findById(categoryId)
             .orElseThrow(() -> new EntityNotFoundException("BookCategory",
                 Set.of(categoryId)));
+    }
+
+    @Override
+    @Transactional
+    public void updateBookCategory(long categoryId, BookCategoryUpdateDto bookCategoryUpdateDto) {
+        BookCategory bookCategory = getBookCategory(categoryId);
+        bookCategoryMapper.bookCategoryUpdateDtoToBookCategory(bookCategoryUpdateDto, bookCategory);
+        bookCategoryRepository.save(bookCategory);
     }
 }
