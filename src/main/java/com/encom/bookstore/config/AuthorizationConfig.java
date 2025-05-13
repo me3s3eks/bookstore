@@ -3,6 +3,7 @@ package com.encom.bookstore.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,10 +23,20 @@ public class AuthorizationConfig {
         http.httpBasic(c -> {
             c.authenticationEntryPoint(authenticationEntryPoint);
         });
+
+        http.csrf(c -> c.disable());
+
         http.authenticationProvider(authenticationProvider);
+
+        //Setting authorization for authors' endpoints
         http.authorizeHttpRequests(c -> {
-            c.anyRequest().permitAll();
+            c.requestMatchers(HttpMethod.POST, "/catalogue/authors/**").hasRole("MANAGER");
+            c.requestMatchers(HttpMethod.GET, "/catalogue/authors/**").permitAll();
+            c.requestMatchers(HttpMethod.PATCH, "/catalogue/authors/**").hasRole("MANAGER");
+            c.requestMatchers(HttpMethod.DELETE, "/catalogue/authors/**").hasRole("MANAGER");
         });
+
+        http.authorizeHttpRequests(c -> c.anyRequest().permitAll());
 
         return http.build();
     }
