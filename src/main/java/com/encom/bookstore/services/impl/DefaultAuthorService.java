@@ -11,16 +11,19 @@ import com.encom.bookstore.model.Author;
 import com.encom.bookstore.repositories.AuthorRepository;
 import com.encom.bookstore.repositories.BookRepository;
 import com.encom.bookstore.services.AuthorService;
+import com.encom.bookstore.specifications.AuthorSpecifications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -62,8 +65,16 @@ public class DefaultAuthorService implements AuthorService {
 
     @Override
     public Page<AuthorBaseInfoDto> findAllAuthorsByKeyword(Pageable pageable, String keyword) {
-        Page<Author> auhotrsPage = authorRepository.findAllByKeyword(pageable, keyword);
-        return auhotrsPage.map(authorMapper::authorToAuthorBaseInfoDto);
+        if (keyword == null) {
+            return findAllAuthors(pageable);
+        } else {
+            Page<Author> auhotrsPage = authorRepository.findAll(Specification.where(
+                    AuthorSpecifications.nameLike(keyword)
+                        .or(AuthorSpecifications.surnameLike(keyword)
+                        )),
+                pageable);
+            return auhotrsPage.map(authorMapper::authorToAuthorBaseInfoDto);
+        }
     }
 
     @Override
