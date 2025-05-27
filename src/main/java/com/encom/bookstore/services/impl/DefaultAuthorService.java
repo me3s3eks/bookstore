@@ -68,11 +68,8 @@ public class DefaultAuthorService implements AuthorService {
         if (keyword == null) {
             return findAllAuthors(pageable);
         } else {
-            Page<Author> auhotrsPage = authorRepository.findAll(Specification.where(
-                    AuthorSpecifications.nameLike(keyword)
-                        .or(AuthorSpecifications.surnameLike(keyword)
-                        )),
-                pageable);
+            Specification<Author> authorSpecification = getAuthorSpecificationForKeyword(keyword);
+            Page<Author> auhotrsPage = authorRepository.findAll(authorSpecification, pageable);
             return auhotrsPage.map(authorMapper::authorToAuthorBaseInfoDto);
         }
     }
@@ -114,5 +111,10 @@ public class DefaultAuthorService implements AuthorService {
         Author updatedAuthor = getAuthor(authorId);
         authorMapper.updateAuthorFromDto(authorUpdateDto, updatedAuthor);
         authorRepository.save(updatedAuthor);
+    }
+
+    private static Specification<Author> getAuthorSpecificationForKeyword(String keyword) {
+        return Specification.where(AuthorSpecifications.nameLike(keyword)
+            .or(AuthorSpecifications.surnameLike(keyword)));
     }
 }
