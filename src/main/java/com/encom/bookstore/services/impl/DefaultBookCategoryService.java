@@ -10,10 +10,12 @@ import com.encom.bookstore.model.BookCategory;
 import com.encom.bookstore.repositories.BookCategoryRepository;
 import com.encom.bookstore.repositories.BookRepository;
 import com.encom.bookstore.services.BookCategoryService;
+import com.encom.bookstore.specifications.BookCategorySpecifications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,8 +55,13 @@ public class DefaultBookCategoryService implements BookCategoryService {
 
     @Override
     public Page<BookCategoryDto> findAllBookCategoriesByKeyword(Pageable pageable, String keyword) {
-        Page<BookCategory> bookCategoriesPage = bookCategoryRepository.findAllByKeyword(pageable, keyword);
-        return bookCategoriesPage.map(bookCategoryMapper::bookCategoryToBookCategoryDto);
+        if (keyword == null) {
+            return findAllBookCategories(pageable);
+        } else {
+            Specification<BookCategory> bookCategorySpecification = getBookCategorySpecificationForKeyword(keyword);
+            Page<BookCategory> bookCategoriesPage = bookCategoryRepository.findAll(bookCategorySpecification, pageable);
+            return bookCategoriesPage.map(bookCategoryMapper::bookCategoryToBookCategoryDto);
+        }
     }
 
     @Override
@@ -83,5 +90,9 @@ public class DefaultBookCategoryService implements BookCategoryService {
         BookCategory bookCategory = getBookCategory(categoryId);
         bookCategoryMapper.bookCategoryUpdateDtoToBookCategory(bookCategoryUpdateDto, bookCategory);
         bookCategoryRepository.save(bookCategory);
+    }
+
+    private Specification<BookCategory> getBookCategorySpecificationForKeyword(String keyword) {
+        return BookCategorySpecifications.nameLike(keyword);
     }
 }

@@ -56,12 +56,7 @@ public class BookCategoriesRestController {
     public ResponseEntity<Page<BookCategoryDto>> getAllBookCategories(
         @RequestParam(name = "keyword", required = false) String keyword,
         Pageable pageable) {
-        Page<BookCategoryDto> bookCategoryPage = null;
-        if (keyword == null) {
-            bookCategoryPage = bookCategoryService.findAllBookCategories(pageable);
-        } else {
-            bookCategoryPage = bookCategoryService.findAllBookCategoriesByKeyword(pageable, keyword);
-        }
+        Page<BookCategoryDto> bookCategoryPage = bookCategoryService.findAllBookCategoriesByKeyword(pageable, keyword);
         return ResponseEntity.ok(bookCategoryPage);
     }
 
