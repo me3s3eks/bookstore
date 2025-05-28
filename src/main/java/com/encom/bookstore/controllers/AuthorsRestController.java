@@ -53,7 +53,7 @@ public class AuthorsRestController {
     public ResponseEntity<Page<AuthorBaseInfoDto>> getAllAuthors(
         @RequestParam(name = "keyword", required = false) String keyword,
         Pageable pageable) {
-        Page<AuthorBaseInfoDto> authorPage = authorService.findAllAuthorsByKeyword(pageable, keyword);;
+        Page<AuthorBaseInfoDto> authorPage = authorService.findAllAuthorsByKeyword(pageable, keyword);
         return ResponseEntity.ok(authorPage);
     }
 
