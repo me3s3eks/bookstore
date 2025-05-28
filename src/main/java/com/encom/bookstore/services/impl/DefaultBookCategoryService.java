@@ -1,8 +1,7 @@
 package com.encom.bookstore.services.impl;
 
-import com.encom.bookstore.dto.BookCategoryCreateDto;
+import com.encom.bookstore.dto.BookCategoryRequestDto;
 import com.encom.bookstore.dto.BookCategoryDto;
-import com.encom.bookstore.dto.BookCategoryUpdateDto;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import com.encom.bookstore.exceptions.ForeignKeyDeleteConstraintException;
 import com.encom.bookstore.mappers.BookCategoryMapper;
@@ -35,8 +34,8 @@ public class DefaultBookCategoryService implements BookCategoryService {
 
     @Override
     @Transactional
-    public BookCategoryDto createBookCategory(BookCategoryCreateDto bookCategoryCreateDto) {
-        BookCategory bookCategory = bookCategoryMapper.bookCategoryCreateDtoToBookCategory(bookCategoryCreateDto);
+    public BookCategoryDto createBookCategory(BookCategoryRequestDto bookCategoryRequestDto) {
+        BookCategory bookCategory = bookCategoryMapper.bookCategoryRequestDtoToBookCategory(bookCategoryRequestDto);
         bookCategoryRepository.save(bookCategory);
         return bookCategoryMapper.bookCategoryToBookCategoryDto(bookCategory);
     }
@@ -86,9 +85,9 @@ public class DefaultBookCategoryService implements BookCategoryService {
 
     @Override
     @Transactional
-    public void updateBookCategory(long categoryId, BookCategoryUpdateDto bookCategoryUpdateDto) {
+    public void updateBookCategory(long categoryId, BookCategoryRequestDto bookCategoryRequestDto) {
         BookCategory bookCategory = getBookCategory(categoryId);
-        bookCategoryMapper.bookCategoryUpdateDtoToBookCategory(bookCategoryUpdateDto, bookCategory);
+        bookCategoryMapper.updateBookCategoryFromDto(bookCategoryRequestDto, bookCategory);
         bookCategoryRepository.save(bookCategory);
     }
 
