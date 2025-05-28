@@ -2,9 +2,8 @@ package com.encom.bookstore.services;
 
 
 import com.encom.bookstore.dto.AuthorBaseInfoDto;
-import com.encom.bookstore.dto.AuthorCreateDto;
 import com.encom.bookstore.dto.AuthorDto;
-import com.encom.bookstore.dto.AuthorUpdateDto;
+import com.encom.bookstore.dto.AuthorRequestDto;
 import com.encom.bookstore.model.Author;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +13,7 @@ import java.util.Set;
 
 public interface AuthorService {
 
-    AuthorDto createAuthor(AuthorCreateDto authorCreateDto);
+    AuthorDto createAuthor(AuthorRequestDto authorRequestDto);
 
     AuthorDto findAuthor(long id);
 
@@ -30,5 +29,5 @@ public interface AuthorService {
 
     void deleteAuthor(long authorId);
 
-    void updateAuthor(long authorId, AuthorUpdateDto authorUpdateDto);
+    void updateAuthor(long authorId, AuthorRequestDto authorRequestDto);
 }

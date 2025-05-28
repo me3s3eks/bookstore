@@ -1,9 +1,8 @@
 package com.encom.bookstore.services.impl;
 
 import com.encom.bookstore.dto.AuthorBaseInfoDto;
-import com.encom.bookstore.dto.AuthorCreateDto;
+import com.encom.bookstore.dto.AuthorRequestDto;
 import com.encom.bookstore.dto.AuthorDto;
-import com.encom.bookstore.dto.AuthorUpdateDto;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import com.encom.bookstore.exceptions.ForeignKeyDeleteConstraintException;
 import com.encom.bookstore.mappers.AuthorMapper;
@@ -39,8 +38,8 @@ public class DefaultAuthorService implements AuthorService {
 
     @Override
     @Transactional
-    public AuthorDto createAuthor(AuthorCreateDto authorCreateDto) {
-        Author author = authorMapper.authorCreateDtoToAuthor(authorCreateDto);
+    public AuthorDto createAuthor(AuthorRequestDto authorRequestDto) {
+        Author author = authorMapper.authorRequestDtoToAuthor(authorRequestDto);
         author = authorRepository.save(author);
         return authorMapper.authorToAuthorDto(author);
     }
@@ -107,9 +106,9 @@ public class DefaultAuthorService implements AuthorService {
 
     @Override
     @Transactional
-    public void updateAuthor(long authorId, AuthorUpdateDto authorUpdateDto) {
+    public void updateAuthor(long authorId, AuthorRequestDto authorRequestDto) {
         Author updatedAuthor = getAuthor(authorId);
-        authorMapper.updateAuthorFromDto(authorUpdateDto, updatedAuthor);
+        authorMapper.updateAuthorFromDto(authorRequestDto, updatedAuthor);
         authorRepository.save(updatedAuthor);
     }
 
