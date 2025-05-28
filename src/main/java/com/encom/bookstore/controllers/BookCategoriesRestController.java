@@ -1,8 +1,7 @@
 package com.encom.bookstore.controllers;
 
-import com.encom.bookstore.dto.BookCategoryCreateDto;
+import com.encom.bookstore.dto.BookCategoryRequestDto;
 import com.encom.bookstore.dto.BookCategoryDto;
-import com.encom.bookstore.dto.BookCategoryUpdateDto;
 import com.encom.bookstore.mappers.BookCategoryMapper;
 import com.encom.bookstore.services.BookCategoryService;
 import jakarta.validation.Valid;
@@ -14,9 +13,9 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +32,7 @@ public class BookCategoriesRestController {
 
     @PostMapping
     public ResponseEntity<BookCategoryDto> createBookCategory(
-        @Valid @RequestBody BookCategoryCreateDto bookCategoryCreateDto,
+        @Valid @RequestBody BookCategoryRequestDto bookCategoryRequestDto,
         BindingResult bindingResult,
         UriComponentsBuilder uriComponentsBuilder) throws BindException {
         if (bindingResult.hasErrors()) {
@@ -43,7 +42,7 @@ public class BookCategoriesRestController {
                 throw new BindException(bindingResult);
             }
         } else {
-            BookCategoryDto bookCategoryDto = bookCategoryService.createBookCategory(bookCategoryCreateDto);
+            BookCategoryDto bookCategoryDto = bookCategoryService.createBookCategory(bookCategoryRequestDto);
             return ResponseEntity
                 .created(uriComponentsBuilder
                     .replacePath("/catalogue/book-categories/{categoryId}")
@@ -66,9 +65,9 @@ public class BookCategoriesRestController {
         return ResponseEntity.ok(bookCategoryDto);
     }
 
-    @PatchMapping("/{categoryId:\\d+}")
+    @PutMapping("/{categoryId:\\d+}")
     public ResponseEntity<Void> updateBookCategory(@PathVariable long categoryId,
-                                                   @Valid @RequestBody BookCategoryUpdateDto bookCategoryUpdateDto,
+                                                   @Valid @RequestBody BookCategoryRequestDto bookCategoryRequestDto,
                                                    BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException bindException) {
@@ -77,7 +76,7 @@ public class BookCategoriesRestController {
                 throw new BindException(bindingResult);
             }
         } else {
-               bookCategoryService.updateBookCategory(categoryId, bookCategoryUpdateDto);
+               bookCategoryService.updateBookCategory(categoryId, bookCategoryRequestDto);
                return ResponseEntity.noContent().build();
         }
     }

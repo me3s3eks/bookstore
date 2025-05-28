@@ -1,16 +1,14 @@
 package com.encom.bookstore.services;
 
-import com.encom.bookstore.dto.BookCategoryCreateDto;
+import com.encom.bookstore.dto.BookCategoryRequestDto;
 import com.encom.bookstore.dto.BookCategoryDto;
-import com.encom.bookstore.dto.BookCategoryUpdateDto;
 import com.encom.bookstore.model.BookCategory;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BookCategoryService {
 
-    BookCategoryDto createBookCategory(BookCategoryCreateDto bookCategoryCreateDto);
+    BookCategoryDto createBookCategory(BookCategoryRequestDto bookCategoryRequestDto);
 
     BookCategoryDto findBookCategory(long categoryId);
 
@@ -22,5 +20,5 @@ public interface BookCategoryService {
 
     void deleteBookCategory(long categoryId);
 
-    void updateBookCategory(long categoryId, BookCategoryUpdateDto bookCategoryUpdateDto);
+    void updateBookCategory(long categoryId, BookCategoryRequestDto bookCategoryRequestDto);
 }

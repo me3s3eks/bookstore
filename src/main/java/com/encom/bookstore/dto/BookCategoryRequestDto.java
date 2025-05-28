@@ -1,6 +1,6 @@
 package com.encom.bookstore.dto;
 
-public record BookCategoryCreateDto(
+public record BookCategoryRequestDto(
     String name,
     Long parentId) {
 }

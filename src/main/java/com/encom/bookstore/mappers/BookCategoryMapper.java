@@ -1,8 +1,7 @@
 package com.encom.bookstore.mappers;
 
-import com.encom.bookstore.dto.BookCategoryCreateDto;
 import com.encom.bookstore.dto.BookCategoryDto;
-import com.encom.bookstore.dto.BookCategoryUpdateDto;
+import com.encom.bookstore.dto.BookCategoryRequestDto;
 import com.encom.bookstore.model.BookCategory;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -17,13 +16,8 @@ public interface BookCategoryMapper {
 
     BookCategoryDto bookCategoryToBookCategoryDto(BookCategory bookCategory);
 
-    BookCategory bookCategoryCreateDtoToBookCategory(BookCategoryCreateDto bookCategoryCreateDto);
+    BookCategory bookCategoryRequestDtoToBookCategory(BookCategoryRequestDto bookCategoryRequestDto);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    BookCategory bookCategoryUpdateDtoToBookCategory(BookCategoryUpdateDto bookCategoryUpdateDto,
-                                                     @MappingTarget BookCategory bookCategory);
-
-    default <T> T mapOptionalToType(Optional<T> optional) {
-        return optional.orElse(null);
-    }
+    BookCategory updateBookCategoryFromDto(BookCategoryRequestDto bookCategoryRequestDto,
+                                           @MappingTarget BookCategory bookCategory);
 }
