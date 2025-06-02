@@ -44,6 +44,14 @@ public class AuthorizationConfig {
             c.requestMatchers(HttpMethod.DELETE, "/catalogue/book-categories/**").hasRole("MANAGER");
         });
 
+        //Setting authorization for publishers' endpoints
+        http.authorizeHttpRequests(c -> {
+            c.requestMatchers(HttpMethod.POST, "/catalogue/publishers/**").hasRole("MANAGER");
+            c.requestMatchers(HttpMethod.GET, "/catalogue/publishers/**").permitAll();
+            c.requestMatchers(HttpMethod.PUT, "/catalogue/publishers/**").hasRole("MANAGER");
+            c.requestMatchers(HttpMethod.DELETE, "/catalogue/publishers/**").hasRole("MANAGER");
+        });
+
         http.authorizeHttpRequests(c -> c.anyRequest().permitAll());
 
         return http.build();
