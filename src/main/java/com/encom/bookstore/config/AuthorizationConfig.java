@@ -40,7 +40,7 @@ public class AuthorizationConfig {
         http.authorizeHttpRequests(c -> {
             c.requestMatchers(HttpMethod.POST, "/catalogue/book-categories/**").hasRole("MANAGER");
             c.requestMatchers(HttpMethod.GET, "/catalogue/book-categories/**").permitAll();
-            c.requestMatchers(HttpMethod.PATCH, "/catalogue/book-categories/**").hasRole("MANAGER");
+            c.requestMatchers(HttpMethod.PUT, "/catalogue/book-categories/**").hasRole("MANAGER");
             c.requestMatchers(HttpMethod.DELETE, "/catalogue/book-categories/**").hasRole("MANAGER");
         });
 
