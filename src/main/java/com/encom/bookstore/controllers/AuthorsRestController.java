@@ -44,7 +44,7 @@ public class AuthorsRestController {
         AuthorDto authorDto = authorService.createAuthor(authorRequestDto);
         return ResponseEntity
             .created(uriBuilder
-                .replacePath("/management/catalogue/authors/{authorId}")
+                .replacePath("/catalogue/authors/{authorId}")
                 .build(authorDto.id()))
             .body(authorDto);
     }
