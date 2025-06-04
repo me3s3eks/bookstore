@@ -1,5 +1,6 @@
 package com.encom.bookstore.config;
 
+import com.encom.bookstore.security.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,26 +31,38 @@ public class AuthorizationConfig {
 
         //Setting authorization for authors' endpoints
         http.authorizeHttpRequests(c -> {
-            c.requestMatchers(HttpMethod.POST, "/catalogue/authors/**").hasRole("MANAGER");
-            c.requestMatchers(HttpMethod.GET, "/catalogue/authors/**").permitAll();
-            c.requestMatchers(HttpMethod.PUT, "/catalogue/authors/**").hasRole("MANAGER");
-            c.requestMatchers(HttpMethod.DELETE, "/catalogue/authors/**").hasRole("MANAGER");
+            c.requestMatchers(HttpMethod.POST, "/catalogue/authors/**")
+                .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
+            c.requestMatchers(HttpMethod.GET, "/catalogue/authors/**")
+                .permitAll();
+            c.requestMatchers(HttpMethod.PUT, "/catalogue/authors/**")
+                .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
+            c.requestMatchers(HttpMethod.DELETE, "/catalogue/authors/**")
+                .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
         });
 
         //Setting authorization for book categories' endpoints
         http.authorizeHttpRequests(c -> {
-            c.requestMatchers(HttpMethod.POST, "/catalogue/book-categories/**").hasRole("MANAGER");
-            c.requestMatchers(HttpMethod.GET, "/catalogue/book-categories/**").permitAll();
-            c.requestMatchers(HttpMethod.PUT, "/catalogue/book-categories/**").hasRole("MANAGER");
-            c.requestMatchers(HttpMethod.DELETE, "/catalogue/book-categories/**").hasRole("MANAGER");
+            c.requestMatchers(HttpMethod.POST, "/catalogue/book-categories/**")
+                .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
+            c.requestMatchers(HttpMethod.GET, "/catalogue/book-categories/**")
+                .permitAll();
+            c.requestMatchers(HttpMethod.PUT, "/catalogue/book-categories/**")
+                .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
+            c.requestMatchers(HttpMethod.DELETE, "/catalogue/book-categories/**")
+                .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
         });
 
         //Setting authorization for publishers' endpoints
         http.authorizeHttpRequests(c -> {
-            c.requestMatchers(HttpMethod.POST, "/catalogue/publishers/**").hasRole("MANAGER");
-            c.requestMatchers(HttpMethod.GET, "/catalogue/publishers/**").permitAll();
-            c.requestMatchers(HttpMethod.PUT, "/catalogue/publishers/**").hasRole("MANAGER");
-            c.requestMatchers(HttpMethod.DELETE, "/catalogue/publishers/**").hasRole("MANAGER");
+            c.requestMatchers(HttpMethod.POST, "/catalogue/publishers/**")
+                .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
+            c.requestMatchers(HttpMethod.GET, "/catalogue/publishers/**")
+                .permitAll();
+            c.requestMatchers(HttpMethod.PUT, "/catalogue/publishers/**")
+                .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
+            c.requestMatchers(HttpMethod.DELETE, "/catalogue/publishers/**")
+                .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
         });
 
         http.authorizeHttpRequests(c -> c.anyRequest().permitAll());
