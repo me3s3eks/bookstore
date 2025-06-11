@@ -1,9 +1,9 @@
 package com.encom.bookstore.services.impl;
 
 import com.encom.bookstore.dto.BookBaseInfoDto;
-import com.encom.bookstore.dto.BookCreateDto;
 import com.encom.bookstore.dto.BookDto;
-import com.encom.bookstore.dto.BookUpdateDto;
+import com.encom.bookstore.dto.BookFilterDto;
+import com.encom.bookstore.dto.BookRequestDto;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import com.encom.bookstore.mappers.BookMapper;
 import com.encom.bookstore.model.Author;
@@ -11,15 +11,20 @@ import com.encom.bookstore.model.Book;
 import com.encom.bookstore.model.BookCategory;
 import com.encom.bookstore.model.Publisher;
 import com.encom.bookstore.repositories.BookRepository;
+import com.encom.bookstore.security.UserRole;
 import com.encom.bookstore.services.AuthorService;
 import com.encom.bookstore.services.BookCategoryService;
 import com.encom.bookstore.services.BookService;
 import com.encom.bookstore.services.PublisherService;
+import com.encom.bookstore.specifications.BookSpecifications;
+import com.encom.bookstore.utils.SecurityUtils;
+import com.encom.bookstore.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,9 +51,9 @@ public class DefaultBookService implements BookService {
 
     @Override
     @Transactional
-    public BookDto createBook(BookCreateDto bookCreateDto) {
-        Book book = bookMapper.bookCreateDtoToBook(bookCreateDto);
-        addRelatedEntities(book, bookCreateDto);
+    public BookDto createBook(BookRequestDto bookRequestDto) {
+        Book book = bookMapper.bookRequestDtoToBook(bookRequestDto);
+        addRelatedEntities(book, bookRequestDto);
         book = bookRepository.save(book);
         return bookMapper.bookToBookDto(book);
     }
@@ -60,12 +65,12 @@ public class DefaultBookService implements BookService {
     }
 
     @Override
-    public Page<BookBaseInfoDto> findAllBooks(Pageable pageable) {
-        Page<Long> bookIds = bookRepository.findAllIds(pageable);
-        List<Book> books = bookRepository.findAllWithAuthorsByIdIn(bookIds.getContent());
-        long totalElements = bookRepository.count();
-        Page<Book> booksPage = new PageImpl<>(books, pageable, totalElements);
-        return booksPage.map(bookMapper::bookToBookBaseInfoDto);
+    public Page<BookBaseInfoDto> findBooksByFilterDto(Pageable pageable, BookFilterDto bookFilterDto) {
+        Specification<Book> bookSpec = parseFilterDtoToSpecification(bookFilterDto);
+        if (!SecurityUtils.userHasRole(UserRole.ROLE_MANAGER.name())) {
+            bookSpec = bookSpec.and(BookSpecifications.isDeleted(false));
+        }
+        return findBooksBySpecification(bookSpec, pageable);
     }
 
     @Override
@@ -94,20 +99,62 @@ public class DefaultBookService implements BookService {
 
     @Override
     @Transactional
-    public void updateBook(long bookId, BookUpdateDto bookUpdateDto) {
+    public void updateBook(long bookId, BookRequestDto bookRequestDto) {
         Book updatedBook = bookRepository.findById(bookId).orElseThrow(
             () -> new EntityNotFoundException("Book", Set.of(bookId))
         );
-        bookMapper.updateBookFromDtoWithoutRelatedEntities(bookUpdateDto, updatedBook);
-        updateRelatedEntities(updatedBook, bookUpdateDto);
+        bookMapper.updateBookFromDtoWithoutRelatedEntities(bookRequestDto, updatedBook);
+        updateRelatedEntities(updatedBook, bookRequestDto);
         bookRepository.save(updatedBook);
     }
 
+    private Specification<Book> parseFilterDtoToSpecification(BookFilterDto bookFilterDto) {
+        Specification<Book> spec = Specification
+            .where((root, query, cb) -> cb.conjunction());
+        if (bookFilterDto == null) {
+            return spec;
+        }
 
-    private Book addRelatedEntities(Book book, BookCreateDto bookCreateDto) {
-        List<Author> authors = authorService.getAuthors(bookCreateDto.authorsIds());
-        BookCategory category = bookCategoryService.getBookCategory(bookCreateDto.bookCategoryId());
-        Publisher publisher = publisherService.getPublisher(bookCreateDto.publisherId());
+        if (bookFilterDto.keyword() != null) {
+            String keyword = bookFilterDto.keyword();
+            if (StringUtils.hasValidIsbn(keyword)) {
+                spec = spec.and(BookSpecifications.byIsbn(StringUtils.normalizeIsbn(keyword)));
+            } else {
+                spec = spec.and(
+                    BookSpecifications.titleLike(bookFilterDto.keyword())
+                        .or(BookSpecifications.withAuthorNameOrSurnameLike(bookFilterDto.keyword()))
+                );
+            }
+        }
+        if (bookFilterDto.bookCategoryIds() != null) {
+            Set<Long> categoryIdsForFiltering =
+                bookCategoryService.findBookCategoryIdsInSubtree(bookFilterDto.bookCategoryIds());
+            spec = spec.and(BookSpecifications.withBookCategoriesIn(categoryIdsForFiltering));
+        }
+        if (bookFilterDto.publicationDateAfter() != null) {
+            spec = spec.and(BookSpecifications.publicationDateOnOrAfter(bookFilterDto.publicationDateAfter()));
+        }
+        if (bookFilterDto.languages() != null) {
+            spec = spec.and(BookSpecifications.languageIn(bookFilterDto.languages()));
+        }
+        if (bookFilterDto.deleted() != null) {
+            spec = spec.and(BookSpecifications.isDeleted(bookFilterDto.deleted()));
+        }
+        return spec;
+    }
+
+    private Page<BookBaseInfoDto> findBooksBySpecification(Specification<Book> specification, Pageable pageable) {
+        Page<Long> bookIds = bookRepository.findIdsBySpecification(specification, pageable);
+        List<Book> books = bookRepository.findWithAuthorsByIdIn(bookIds.getContent());
+        long totalElements = bookIds.getTotalElements();
+        Page<Book> booksPage = new PageImpl<>(books, pageable, totalElements);
+        return booksPage.map(bookMapper::bookToBookBaseInfoDto);
+    }
+
+    private Book addRelatedEntities(Book book, BookRequestDto bookRequestDto) {
+        List<Author> authors = authorService.getAuthors(bookRequestDto.authorsIds());
+        BookCategory category = bookCategoryService.getBookCategory(bookRequestDto.bookCategoryId());
+        Publisher publisher = publisherService.getPublisher(bookRequestDto.publisherId());
 
         book.setAuthors(authors);
         book.setBookCategory(category);
@@ -116,23 +163,21 @@ public class DefaultBookService implements BookService {
         return book;
     }
 
-    private Book updateRelatedEntities(Book book, BookUpdateDto bookUpdateDto) {
-        if (bookUpdateDto.getAuthorsIds() != null && bookUpdateDto.getAuthorsIds().isPresent()) {
-            Set<Long> authorsIds = bookUpdateDto.getAuthorsIds().get();
+    private Book updateRelatedEntities(Book book, BookRequestDto bookRequestDto) {
+        if (bookRequestDto.authorsIds() != null) {
+            Set<Long> authorsIds = bookRequestDto.authorsIds();
             if (!authorsIds.isEmpty()) {
                 List<Author> authors = authorService.getAuthors(authorsIds);
                 book.setAuthors(authors);
             }
         }
-        if (bookUpdateDto.getBookCategoryId() != null && bookUpdateDto.getBookCategoryId().isPresent()) {
-            BookCategory category =
-                bookCategoryService.getBookCategory(bookUpdateDto.getBookCategoryId().get());
-            book.setBookCategory(category);
-        }
-        if (bookUpdateDto.getPublisherId() != null && bookUpdateDto.getPublisherId().isPresent()) {
-            Publisher publisher = publisherService.getPublisher(bookUpdateDto.getPublisherId().get());
-            book.setPublisher(publisher);
-        }
+
+        BookCategory category = bookCategoryService.getBookCategory(bookRequestDto.bookCategoryId());
+        book.setBookCategory(category);
+
+        Publisher publisher = publisherService.getPublisher(bookRequestDto.publisherId());
+        book.setPublisher(publisher);
+
         return book;
     }
 }

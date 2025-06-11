@@ -1,9 +1,9 @@
 package com.encom.bookstore.controllers;
 
 import com.encom.bookstore.dto.BookBaseInfoDto;
-import com.encom.bookstore.dto.BookCreateDto;
 import com.encom.bookstore.dto.BookDto;
-import com.encom.bookstore.dto.BookUpdateDto;
+import com.encom.bookstore.dto.BookFilterDto;
+import com.encom.bookstore.dto.BookRequestDto;
 import com.encom.bookstore.services.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +14,9 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,13 +24,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/management/catalogue/books")
-public class BooksManagementRestController {
+@RequestMapping("/catalogue/books")
+public class BooksRestController {
 
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<BookDto> createBook(@Valid @RequestBody BookCreateDto bookCreateDto,
+    public ResponseEntity<BookDto> createBook(@Valid @RequestBody BookRequestDto bookRequestDto,
                                               BindingResult bindingResult,
                                               UriComponentsBuilder uriBuilder)
         throws BindException {
@@ -41,19 +41,30 @@ public class BooksManagementRestController {
                 throw new BindException(bindingResult);
             }
         } else {
-            BookDto bookDto = bookService.createBook(bookCreateDto);
+            BookDto bookDto = bookService.createBook(bookRequestDto);
             return ResponseEntity
                 .created(uriBuilder
-                    .replacePath("/management/catalogue/books/{bookId}")
+                    .replacePath("/catalogue/books/{bookId}")
                     .build(bookDto.id()))
                 .body(bookDto);
         }
     }
 
     @GetMapping
-    public ResponseEntity<Page<BookBaseInfoDto>> getAllBooks(Pageable pageable) {
-        Page<BookBaseInfoDto> bookPage = bookService.findAllBooks(pageable);
-        return ResponseEntity.ok(bookPage);
+    public ResponseEntity<Page<BookBaseInfoDto>> getBooks(Pageable pageable,
+                                                          @Valid @RequestBody(required = false) BookFilterDto bookFilterDto,
+                                                          BindingResult bindingResult)
+    throws BindException {
+        if (bindingResult.hasErrors()) {
+            if (bindingResult instanceof BindException bindException) {
+                throw bindException;
+            } else {
+                throw new BindException(bindingResult);
+            }
+        } else {
+            Page<BookBaseInfoDto> bookPage = bookService.findBooksByFilterDto(pageable, bookFilterDto);
+            return ResponseEntity.ok(bookPage);
+        }
     }
 
     //~exclude negative id pattern (delete dash)
@@ -64,9 +75,9 @@ public class BooksManagementRestController {
     }
 
     //~exclude negative id pattern (delete dash)
-    @PatchMapping("/{bookId:[-\\d]+}")
+    @PutMapping("/{bookId:[-\\d]+}")
     public ResponseEntity<Void> updateBook(@PathVariable long bookId,
-                                           @Valid @RequestBody BookUpdateDto bookUpdateDto,
+                                           @Valid @RequestBody BookRequestDto bookRequestDto,
                                            BindingResult bindingResult)
     throws BindException {
         if (bindingResult.hasErrors()) {
@@ -76,7 +87,7 @@ public class BooksManagementRestController {
                 throw new BindException(bindingResult);
             }
         } else {
-            bookService.updateBook(bookId, bookUpdateDto);
+            bookService.updateBook(bookId, bookRequestDto);
             return ResponseEntity.noContent().build();
         }
     }

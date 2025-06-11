@@ -5,7 +5,7 @@ import com.encom.bookstore.model.Language;
 import java.time.LocalDate;
 import java.util.Set;
 
-public record BookCreateDto (
+public record BookRequestDto(
     String title,
     String description,
     Set<Long> authorsIds,
