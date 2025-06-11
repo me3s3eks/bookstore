@@ -1,7 +1,7 @@
 package com.encom.bookstore.services.impl;
 
-import com.encom.bookstore.dto.BookCategoryRequestDto;
 import com.encom.bookstore.dto.BookCategoryDto;
+import com.encom.bookstore.dto.BookCategoryRequestDto;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import com.encom.bookstore.exceptions.ForeignKeyDeleteConstraintException;
 import com.encom.bookstore.mappers.BookCategoryMapper;
@@ -12,6 +12,7 @@ import com.encom.bookstore.services.BookCategoryService;
 import com.encom.bookstore.specifications.BookCategorySpecifications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,6 +33,9 @@ public class DefaultBookCategoryService implements BookCategoryService {
     private final BookRepository bookRepository;
 
     private final BookCategoryMapper bookCategoryMapper;
+
+    @Lazy
+    private final DefaultBookCategoryService bookCategoryService;
 
     @Override
     @Transactional
@@ -61,6 +66,20 @@ public class DefaultBookCategoryService implements BookCategoryService {
             Page<BookCategory> bookCategoriesPage = bookCategoryRepository.findAll(bookCategorySpecification, pageable);
             return bookCategoriesPage.map(bookCategoryMapper::bookCategoryToBookCategoryDto);
         }
+    }
+
+    @Override
+    public Set<Long> findBookCategoryIdsInSubtree(long rootId) {
+        return bookCategoryRepository.findIdsInSubtree(rootId).stream()
+            .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Long> findBookCategoryIdsInSubtree(Set<Long> rootIds) {
+        return rootIds.stream()
+            .map(bookCategoryService::findBookCategoryIdsInSubtree)
+            .flatMap(Set::stream)
+            .collect(Collectors.toSet());
     }
 
     @Override
