@@ -22,14 +22,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/catalogue/books")
+@RequestMapping("/catalogue")
 public class BooksRestController {
 
     private final BookService bookService;
 
-    @PostMapping
+    @PostMapping("/books")
     public ResponseEntity<BookDto> createBook(@Valid @RequestBody BookRequestDto bookRequestDto,
                                               BindingResult bindingResult,
                                               UriComponentsBuilder uriBuilder)
@@ -50,7 +52,7 @@ public class BooksRestController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/books")
     public ResponseEntity<Page<BookBaseInfoDto>> getBooks(Pageable pageable,
                                                           @Valid @RequestBody(required = false) BookFilterDto bookFilterDto,
                                                           BindingResult bindingResult)
@@ -68,14 +70,21 @@ public class BooksRestController {
     }
 
     //~exclude negative id pattern (delete dash)
-    @GetMapping("/{bookId:[-\\d]+}")
+    @GetMapping("/books/{bookId:[-\\d]+}")
     public ResponseEntity<BookDto> getBook(@PathVariable long bookId) {
         BookDto bookDto = bookService.findBook(bookId);
         return ResponseEntity.ok(bookDto);
     }
 
+    @GetMapping("/authors/{authorId}/books")
+    public ResponseEntity<Page<BookBaseInfoDto>> getBooksForAuthor(@PathVariable long authorId,
+                                                                   Pageable pageable) {
+        Page<BookBaseInfoDto> bookPage = bookService.findBooksByAuthor(authorId, pageable);
+        return ResponseEntity.ok(bookPage);
+    }
+
     //~exclude negative id pattern (delete dash)
-    @PutMapping("/{bookId:[-\\d]+}")
+    @PutMapping("/books/{bookId:[-\\d]+}")
     public ResponseEntity<Void> updateBook(@PathVariable long bookId,
                                            @Valid @RequestBody BookRequestDto bookRequestDto,
                                            BindingResult bindingResult)
@@ -93,14 +102,14 @@ public class BooksRestController {
     }
 
     //~exclude negative id pattern (delete dash)
-    @DeleteMapping("/{bookId:[-\\d]+}")
+    @DeleteMapping("/books/{bookId:[-\\d]+}")
     public ResponseEntity<Void> deleteBook(@PathVariable long bookId) {
         bookService.deleteBook(bookId);
         return ResponseEntity.noContent().build();
     }
 
     //~exclude negative id pattern (delete dash)
-    @PostMapping("/{bookId:[-\\d]+}/restore")
+    @PostMapping("/books/{bookId:[-\\d]+}/restore")
     public ResponseEntity<Void> restoreBook(@PathVariable long bookId) {
         bookService.restoreBook(bookId);
         return ResponseEntity.noContent().build();
