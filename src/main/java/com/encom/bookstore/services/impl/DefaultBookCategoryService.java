@@ -70,8 +70,7 @@ public class DefaultBookCategoryService implements BookCategoryService {
 
     @Override
     public Set<Long> findBookCategoryIdsInSubtree(long rootId) {
-        return bookCategoryRepository.findIdsInSubtree(rootId).stream()
-            .collect(Collectors.toSet());
+        return bookCategoryRepository.findIdsInSubtree(rootId);
     }
 
     @Override

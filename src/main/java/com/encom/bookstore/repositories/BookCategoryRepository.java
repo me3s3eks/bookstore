@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface BookCategoryRepository extends JpaRepository<BookCategory, Long>,
@@ -24,5 +24,5 @@ public interface BookCategoryRepository extends JpaRepository<BookCategory, Long
         )
         SELECT * FROM category_subtree
         """, nativeQuery = true)
-    List<Long> findIdsInSubtree(@Param("rootId") long rootId);
+    Set<Long> findIdsInSubtree(@Param("rootId") long rootId);
 }
