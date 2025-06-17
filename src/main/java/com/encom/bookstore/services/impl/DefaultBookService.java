@@ -74,9 +74,6 @@ public class DefaultBookService implements BookService {
     @Override
     public Page<BookBaseInfoDto> findBooksByFilterDto(Pageable pageable, BookFilterDto bookFilterDto) {
         Specification<Book> bookSpec = parseFilterDtoToSpecification(bookFilterDto);
-        if (!SecurityUtils.userHasRole(UserRole.ROLE_MANAGER.name())) {
-            bookSpec = bookSpec.and(BookSpecifications.isDeleted(false));
-        }
         return findBooksBySpecification(bookSpec, pageable);
     }
 
@@ -144,9 +141,15 @@ public class DefaultBookService implements BookService {
         if (bookFilterDto.languages() != null) {
             spec = spec.and(BookSpecifications.languageIn(bookFilterDto.languages()));
         }
-        if (bookFilterDto.deleted() != null) {
-            spec = spec.and(BookSpecifications.isDeleted(bookFilterDto.deleted()));
+
+        if (SecurityUtils.userHasRole(UserRole.ROLE_MANAGER.name())) {
+            if (bookFilterDto.deleted() != null) {
+                spec = spec.and(BookSpecifications.isDeleted(bookFilterDto.deleted()));
+            }
+        } else {
+            spec = spec.and(BookSpecifications.isDeleted(false));
         }
+
         return spec;
     }
 
