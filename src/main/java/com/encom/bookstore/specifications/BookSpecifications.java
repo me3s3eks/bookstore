@@ -54,6 +54,14 @@ public class BookSpecifications {
         };
     }
 
+    public static Specification<Book> withAuthorId(long authorId) {
+        return (root, query, cb) -> {
+            query.distinct(true);
+            Join<Book, Author> authorsJoin = root.join(Book_.authors);
+            return cb.equal(authorsJoin.get(Author_.id), authorId);
+        };
+    }
+
     public static Specification<Book> withAuthor(long authorId) {
         return (root, query, cb) -> {
             query.distinct(true);

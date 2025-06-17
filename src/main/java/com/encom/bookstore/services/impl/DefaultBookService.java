@@ -65,6 +65,13 @@ public class DefaultBookService implements BookService {
     }
 
     @Override
+    public Page<BookBaseInfoDto> findBooksByAuthor(long authorId, Pageable pageable) {
+        Specification<Book> spec = BookSpecifications.withAuthorId(authorId);
+        Page<Book> booksPage = bookRepository.findAll(spec, pageable);
+        return booksPage.map(bookMapper::bookToBookBaseInfoDto);
+    }
+
+    @Override
     public Page<BookBaseInfoDto> findBooksByFilterDto(Pageable pageable, BookFilterDto bookFilterDto) {
         Specification<Book> bookSpec = parseFilterDtoToSpecification(bookFilterDto);
         if (!SecurityUtils.userHasRole(UserRole.ROLE_MANAGER.name())) {

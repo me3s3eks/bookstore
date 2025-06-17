@@ -14,6 +14,8 @@ public interface BookService {
 
     BookDto findBook(long bookId);
 
+    Page<BookBaseInfoDto> findBooksByAuthor(long authorId, Pageable pageable);
+
     Page<BookBaseInfoDto> findBooksByFilterDto(Pageable pageable, BookFilterDto bookFilterDto);
 
     Book getBook(long bookId);
