@@ -5,13 +5,11 @@ import com.encom.bookstore.exceptions.EntityAlreadyExistsException;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import com.encom.bookstore.exceptions.InvalidRequestDataException;
 import com.encom.bookstore.mappers.BookVariantMapper;
-import com.encom.bookstore.mappers.PaperBookPropertiesMapper;
 import com.encom.bookstore.model.Book;
 import com.encom.bookstore.model.BookType;
 import com.encom.bookstore.model.BookVariant;
 import com.encom.bookstore.model.BookVariantId;
 import com.encom.bookstore.repositories.BookVariantRepository;
-import com.encom.bookstore.repositories.PaperBookPropertiesRepository;
 import com.encom.bookstore.services.BookService;
 import com.encom.bookstore.services.BookVariantService;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +32,6 @@ public class DefaultBookVariantService implements BookVariantService {
     private final BookVariantMapper bookVariantMapper;
 
     private final BookService bookService;
-
-    private final PaperBookPropertiesRepository paperBookPropertiesRepository;
-
-    private final PaperBookPropertiesMapper paperBookPropertiesMapper;
 
     @Override
     @Transactional
