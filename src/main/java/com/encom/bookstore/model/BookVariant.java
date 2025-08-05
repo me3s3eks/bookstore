@@ -2,6 +2,7 @@ package com.encom.bookstore.model;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -9,6 +10,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -22,6 +25,12 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "book_variants")
+@NamedEntityGraph(
+    name = "BookVariant.paperBookProperties",
+    attributeNodes = {
+        @NamedAttributeNode("paperBookProperties")
+    }
+)
 @Getter
 @Setter
 @ToString
@@ -47,7 +56,7 @@ public class BookVariant {
     @Column(name = "product_status", nullable = false)
     private AvailabilityStatus availabilityStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "paper_book_properties_id")
     private PaperBookProperties paperBookProperties;
 

@@ -21,7 +21,7 @@ public class ControllerExceptionHandler {
     public String handleUserNotFoundException(UserNotFoundException exception, Model model,
                                               HttpServletResponse response, Locale locale) {
         response.setStatus(HttpStatus.NOT_FOUND.value());
-        model.addAttribute("error", messageSource.getMessage("errors.error.user_not_found",
+        model.addAttribute("error", messageSource.getMessage("errors.error.404.user_not_found",
                 new Object[]{exception.getMessage()}, locale));
         return "errors/404";
     }

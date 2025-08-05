@@ -65,6 +65,18 @@ public class AuthorizationConfig {
                 .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
         });
 
+        //Setting authorization for book variants' endpoints
+        http.authorizeHttpRequests(c -> {
+            c.requestMatchers(HttpMethod.POST, "/catalogue/books/{bookId}/variants")
+                .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
+            c.requestMatchers(HttpMethod.GET, "/catalogue/books/{bookId}/variants")
+                .permitAll();
+            c.requestMatchers(HttpMethod.GET,  "/catalogue/books/{bookId}/variants/{bookType}")
+                .permitAll();
+            c.requestMatchers(HttpMethod.PUT, "/catalogue/books/{bookId}/variants/{bookType}")
+                .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
+        });
+
         //Setting authorization for books' endpoints
         http.authorizeHttpRequests(c -> {
             c.requestMatchers(HttpMethod.POST, "/catalogue/books/**")

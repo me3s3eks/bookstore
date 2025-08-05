@@ -15,6 +15,8 @@ public class StringUtils {
     private static final Pattern ISBN_DISALLOWED_CHARS_PATTERN = Pattern
         .compile("[^\\dXx]");
 
+    private static final Pattern HYPHEN_PATTERN = Pattern.compile("-");
+
     public static boolean hasValidIsbn(String checkedString) {
         Matcher matcherIsbn = ISBN_PATTERN.matcher(checkedString);
         if (matcherIsbn.find()) {
@@ -28,6 +30,13 @@ public class StringUtils {
         return ISBN_DISALLOWED_CHARS_PATTERN
             .matcher(isbn)
             .replaceAll("")
+            .toUpperCase();
+    }
+
+    public static String pathVariableToBookTypeString(String pathVariable) {
+        return HYPHEN_PATTERN
+            .matcher(pathVariable)
+            .replaceAll("_")
             .toUpperCase();
     }
 }
