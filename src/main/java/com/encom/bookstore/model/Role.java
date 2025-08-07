@@ -28,7 +28,7 @@ public class Role {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(length = 10000)
