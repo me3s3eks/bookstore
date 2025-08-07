@@ -4,7 +4,6 @@ import com.encom.bookstore.dto.RoleBaseInfoDto;
 import com.encom.bookstore.dto.RoleDto;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import com.encom.bookstore.mappers.RoleMapper;
-import com.encom.bookstore.model.Author;
 import com.encom.bookstore.model.Role;
 import com.encom.bookstore.repositories.RoleRepository;
 import com.encom.bookstore.services.RoleService;
