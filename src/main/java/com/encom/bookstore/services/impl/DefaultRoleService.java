@@ -45,5 +45,14 @@ public class DefaultRoleService implements RoleService {
             .orElseThrow(() -> new EntityNotFoundException("Role", Set.of(roleId)));
     }
 
+    @Override
+    public Role findRoleByName(String roleName) {
+        return roleRepository.findByName(roleName)
+            .orElseThrow(() -> new EntityNotFoundException("Role", Set.of(roleName)));
+    }
 
+    @Override
+    public List<Role> findRolesByIds(Set<Long> roleIds) {
+        return roleRepository.findAllById(roleIds);
+    }
 }
