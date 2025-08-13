@@ -22,7 +22,7 @@ import org.hibernate.annotations.NaturalId;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -82,5 +82,5 @@ public class User {
     )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private List<Role> roles;
+    private Set<Role> roles;
 }

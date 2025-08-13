@@ -82,7 +82,7 @@ public class RestControllerExceptionHandler {
 
     @ExceptionHandler(InvalidRequestDataException.class)
     public ResponseEntity<ProblemDetail> handleInvalidRequestDataException(InvalidRequestDataException e,
-        Locale locale) {
+                                                                           Locale locale) {
         String localizedMessage = messageSource.getMessage("errors.error.400.invalid_request_data",
             new Object[]{e.getFieldName(), e.getMessage()}, "errors.error.400.default", locale);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, localizedMessage);
@@ -91,7 +91,7 @@ public class RestControllerExceptionHandler {
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
     public ResponseEntity<ProblemDetail> handleEntityAlreadyExistsException(EntityAlreadyExistsException e,
-        Locale locale) {
+                                                                            Locale locale) {
         String localizedMessage = messageSource.getMessage("errors.error.409.entity_already_exists",
             null, "errors.error.409.default", locale);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, localizedMessage);

@@ -1,22 +1,35 @@
 package com.encom.bookstore.services;
 
-import com.encom.bookstore.dto.UserCreateDto;
+import com.encom.bookstore.dto.RoleBaseInfoDto;
+import com.encom.bookstore.dto.UserBaseInfoDto;
+import com.encom.bookstore.dto.UserFilterDto;
+import com.encom.bookstore.dto.UserRequestDto;
+import com.encom.bookstore.dto.UserResponseDto;
+import com.encom.bookstore.dto.UserRolesUpdateDto;
 import com.encom.bookstore.dto.UserUpdateDto;
 import com.encom.bookstore.model.User;
-import org.springframework.ui.Model;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Locale;
+import java.util.Set;
 
 public interface UserService {
 
-    List<User> findAllUsers();
+    UserResponseDto createUser(UserRequestDto userRequestDto);
 
-    User createUser(UserCreateDto userCreateDto);
+    UserResponseDto findUser(long userId);
 
-    User findUser(long userId);
+    void updateUser(long userId, UserUpdateDto userUpdateDto);
 
-    void updateUser(long userId, UserUpdateDto userUpdateDto, Model model, Locale locale);
+    void deleteUser(long userId);
 
-    void deleteUser(long id);
+    void assignRoles(long userId, UserRolesUpdateDto userRolesUpdateDto);
+
+    Page<UserBaseInfoDto> findUsersByFilterDto(Pageable pageable, UserFilterDto userFilterDto);
+
+    User getUser(long userId);
+
+    Set<RoleBaseInfoDto> findAssignedRoles(long userId);
+
+    void restoreUser(long userId);
 }
