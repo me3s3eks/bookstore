@@ -1,6 +1,8 @@
 package com.encom.bookstore.mappers;
 
-import com.encom.bookstore.dto.UserCreateDto;
+import com.encom.bookstore.dto.UserBaseInfoDto;
+import com.encom.bookstore.dto.UserRequestDto;
+import com.encom.bookstore.dto.UserResponseDto;
 import com.encom.bookstore.dto.UserUpdateDto;
 import com.encom.bookstore.model.User;
 import org.mapstruct.BeanMapping;
@@ -14,8 +16,12 @@ import org.mapstruct.ReportingPolicy;
 public interface UserMapper {
 
     @Mapping(target = "password", ignore = true)
-    User userCreateDtoToUser(UserCreateDto userCreateDto);
+    User userRequestDtoToUser(UserRequestDto userRequestDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateUserFromUserUpdateDto(UserUpdateDto userUpdateDto, @MappingTarget User user);
+    User updateUserFromUserUpdateDto(UserUpdateDto userUpdateDto, @MappingTarget User user);
+
+    UserResponseDto userToUserResponseDto(User user);
+
+    UserBaseInfoDto userToUserBaseInfoDto(User user);
 }
