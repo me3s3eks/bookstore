@@ -71,7 +71,7 @@ public class AuthorizationConfig {
                 .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
             c.requestMatchers(HttpMethod.GET, "/catalogue/books/{bookId}/variants")
                 .permitAll();
-            c.requestMatchers(HttpMethod.GET,  "/catalogue/books/{bookId}/variants/{bookType}")
+            c.requestMatchers(HttpMethod.GET, "/catalogue/books/{bookId}/variants/{bookType}")
                 .permitAll();
             c.requestMatchers(HttpMethod.PUT, "/catalogue/books/{bookId}/variants/{bookType}")
                 .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
@@ -87,6 +87,28 @@ public class AuthorizationConfig {
                 .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
             c.requestMatchers(HttpMethod.DELETE, "/catalogue/books/**")
                 .hasRole(UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
+        });
+
+        //Setting authorization for users' endpoints
+        http.authorizeHttpRequests(c -> {
+            c.requestMatchers(HttpMethod.POST, "/accounts/users/restore")
+                .hasAnyRole(UserRole.ROLE_ADMIN.getRoleNameWithoutPrefix(),
+                    UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
+            c.requestMatchers(HttpMethod.POST, "/accounts/users")
+                .permitAll();
+            c.requestMatchers(HttpMethod.GET, "/accounts/users")
+                .hasAnyRole(UserRole.ROLE_ADMIN.getRoleNameWithoutPrefix(),
+                    UserRole.ROLE_MANAGER.getRoleNameWithoutPrefix());
+            c.requestMatchers(HttpMethod.GET, "/accounts/users/{userId}")
+                .authenticated();
+            c.requestMatchers(HttpMethod.GET, "/accounts/users/{userId}/roles")
+                .hasRole(UserRole.ROLE_ADMIN.getRoleNameWithoutPrefix());
+            c.requestMatchers(HttpMethod.PUT, "/accounts/users/{userId}")
+                .authenticated();
+            c.requestMatchers(HttpMethod.PUT, "/accounts/users/{userId}/roles")
+                .hasRole(UserRole.ROLE_ADMIN.getRoleNameWithoutPrefix());
+            c.requestMatchers(HttpMethod.DELETE, "/accounts/users/{userId}")
+                .authenticated();
         });
 
         http.authorizeHttpRequests(c -> c.anyRequest().permitAll());
