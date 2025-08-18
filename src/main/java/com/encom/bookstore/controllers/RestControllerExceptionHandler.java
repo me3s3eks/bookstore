@@ -1,5 +1,8 @@
 package com.encom.bookstore.controllers;
 
+import com.encom.bookstore.exceptions.BookVariantNotAvailableException;
+import com.encom.bookstore.exceptions.CartAlreadyContainsItemException;
+import com.encom.bookstore.exceptions.CartNotContainsItemException;
 import com.encom.bookstore.exceptions.EntityAlreadyExistsException;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import com.encom.bookstore.exceptions.ForeignKeyDeleteConstraintException;
@@ -95,7 +98,44 @@ public class RestControllerExceptionHandler {
         String localizedMessage = messageSource.getMessage("errors.error.409.entity_already_exists",
             null, "errors.error.409.default", locale);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, localizedMessage);
-        problemDetail.setProperty("EntityId", e.getEntityId());
+        problemDetail.setProperty("entityId", e.getEntityId());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
+    }
+
+    @ExceptionHandler(CartAlreadyContainsItemException.class)
+    public ResponseEntity<ProblemDetail> handleCartAlreadyContainsItemException(CartAlreadyContainsItemException e,
+                                                                                Locale locale) {
+        String localizedMessage = messageSource.getMessage("errors.error.409.cart_already_contains_item",
+            null, "errors.error.409.default", locale);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, localizedMessage);
+        problemDetail.setProperty("bookId", e.getBookId());
+        problemDetail.setProperty("bookType", e.getBookType());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
+    }
+
+    @ExceptionHandler(CartNotContainsItemException.class)
+    public ResponseEntity<ProblemDetail> handleCartNotContainsItemException(CartNotContainsItemException e,
+                                                                            Locale locale) {
+        String localizedMessage = messageSource.getMessage("errors.error.404.cart_not_contains_item",
+            null, "errors.error.409.default", locale);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, localizedMessage);
+        problemDetail.setProperty("bookId", e.getBookId());
+        problemDetail.setProperty("bookType", e.getBookType());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
+    }
+
+    @ExceptionHandler(BookVariantNotAvailableException.class)
+    public ResponseEntity<ProblemDetail> handleBookVariantNotAvailableException(BookVariantNotAvailableException e,
+                                                                                Locale locale) {
+        String localizedMessage = messageSource.getMessage("errors.error.400.book_variant_not_available",
+            null, "errors.error.409.default", locale);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, localizedMessage);
+        problemDetail.setProperty("bookId", e.getBookId());
+        problemDetail.setProperty("bookType", e.getBookType());
+        problemDetail.setProperty("availabilityStatus", e.getAvailabilityStatus());
+        if (e.getAvailableQuantity() != null) {
+            problemDetail.setProperty("availableQuantity", e.getAvailableQuantity());
+        }
+        return ResponseEntity.badRequest().body(problemDetail);
     }
 }
