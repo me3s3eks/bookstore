@@ -8,10 +8,10 @@ import com.encom.bookstore.utils.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
-    uses = StringUtils.class)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface BookMapper {
 
     BookBaseInfoDto bookToBookBaseInfoDto(Book book);
@@ -26,4 +26,9 @@ public interface BookMapper {
     @Mapping(target = "publisher", ignore = true)
     @Mapping(source = "isbn", target = "isbn", qualifiedByName = "normalizeIsbn")
     Book updateBookFromDtoWithoutRelatedEntities(BookRequestDto bookRequestDto, @MappingTarget Book book);
+
+    @Named("normalizeIsbn")
+    default String normalizeIsbn(String isbn) {
+        return StringUtils.normalizeIsbn(isbn);
+    }
 }

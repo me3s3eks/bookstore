@@ -25,7 +25,6 @@ public class StringUtils {
         return false;
     }
 
-    @Named("normalizeIsbn")
     public static String normalizeIsbn(String isbn) {
         return ISBN_DISALLOWED_CHARS_PATTERN
             .matcher(isbn)
