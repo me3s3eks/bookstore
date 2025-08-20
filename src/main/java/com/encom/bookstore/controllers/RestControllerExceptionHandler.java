@@ -3,6 +3,7 @@ package com.encom.bookstore.controllers;
 import com.encom.bookstore.exceptions.BookVariantNotAvailableException;
 import com.encom.bookstore.exceptions.CartAlreadyContainsItemException;
 import com.encom.bookstore.exceptions.CartNotContainsItemException;
+import com.encom.bookstore.exceptions.DeliveryAddressAlreadyExistsException;
 import com.encom.bookstore.exceptions.EntityAlreadyExistsException;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import com.encom.bookstore.exceptions.ForeignKeyDeleteConstraintException;
@@ -137,5 +138,15 @@ public class RestControllerExceptionHandler {
             problemDetail.setProperty("availableQuantity", e.getAvailableQuantity());
         }
         return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler(DeliveryAddressAlreadyExistsException.class)
+    public ResponseEntity<ProblemDetail> handleDeliveryAddressAlreadyExistsException(
+        DeliveryAddressAlreadyExistsException e,
+        Locale locale) {
+        String localizedMessage = messageSource.getMessage("errors.error.409.delivery_address_already_exists",
+            null, "errors.error.409.default", locale);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, localizedMessage);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }
 }
