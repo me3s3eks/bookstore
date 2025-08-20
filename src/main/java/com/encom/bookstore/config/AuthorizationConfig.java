@@ -111,6 +111,18 @@ public class AuthorizationConfig {
                 .authenticated();
         });
 
+        //Setting authorization for delivery address's endpoints
+        http.authorizeHttpRequests(c -> {
+            c.requestMatchers(HttpMethod.POST, "/accounts/users/delivery-addresses")
+                .authenticated();
+            c.requestMatchers(HttpMethod.GET, "/accounts/users/delivery-addresses")
+                .authenticated();
+            c.requestMatchers(HttpMethod.PUT, "/accounts/users/delivery-addresses/{addressId}")
+                .authenticated();
+            c.requestMatchers(HttpMethod.DELETE, "/accounts/users/delivery-addresses/{addressId}")
+                .authenticated();
+        });
+
         http.authorizeHttpRequests(c -> c.anyRequest().permitAll());
 
         return http.build();
