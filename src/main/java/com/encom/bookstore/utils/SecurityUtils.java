@@ -55,6 +55,16 @@ public final class SecurityUtils {
         return userId == userPrincipal.getId();
     }
 
+    public static long getCurrentUserId() {
+        if (!isUserAuthenticated()) {
+            return -1L;
+        }
+
+        Authentication token = getAuthenticationFromContext();
+        UserPrincipal userPrincipal = (UserPrincipal) token.getPrincipal();
+        return userPrincipal.getId();
+    }
+
     private static Authentication getAuthenticationFromContext() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
