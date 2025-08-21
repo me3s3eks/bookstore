@@ -1,14 +1,17 @@
 package com.encom.bookstore.services.impl;
 
 import com.encom.bookstore.dto.BookVariantDto;
+import com.encom.bookstore.exceptions.BookVariantNotAvailableException;
 import com.encom.bookstore.exceptions.EntityAlreadyExistsException;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import com.encom.bookstore.exceptions.InvalidRequestDataException;
 import com.encom.bookstore.mappers.BookVariantMapper;
+import com.encom.bookstore.model.AvailabilityStatus;
 import com.encom.bookstore.model.Book;
 import com.encom.bookstore.model.BookType;
 import com.encom.bookstore.model.BookVariant;
 import com.encom.bookstore.model.BookVariantId;
+import com.encom.bookstore.model.CartItem;
 import com.encom.bookstore.repositories.BookVariantRepository;
 import com.encom.bookstore.services.BookService;
 import com.encom.bookstore.services.BookVariantService;
@@ -72,10 +75,64 @@ public class DefaultBookVariantService implements BookVariantService {
     public void updateBookVariant(BookVariantDto bookVariantDto) {
         validateBookVariantDto(bookVariantDto);
         BookVariantId bookVariantId = getBookVariantIdFromDto(bookVariantDto);
-        BookVariant updatedBookVariant = bookVariantRepository.findWithPaperBookPropertiesById(bookVariantId)
-            .orElseThrow(() -> new EntityNotFoundException("BookVariant", Set.of(bookVariantId)));
+        BookVariant updatedBookVariant = getBookVariant(bookVariantId);
         bookVariantMapper.updateBookVariantFromDto(bookVariantDto, updatedBookVariant);
         bookVariantRepository.save(updatedBookVariant);
+    }
+
+    @Override
+    public BookVariant getBookVariantForUpdate(BookVariantId bookVariantId) {
+        return bookVariantRepository.findLockWithPropertiesById(bookVariantId)
+            .orElseThrow(() -> new EntityNotFoundException("BookVariant", Set.of(bookVariantId)));
+    }
+
+    @Override
+    public void checkBookVariantAvailability(BookVariantId bookVariantId, CartItem cartItem) {
+        BookVariant bookVariant = getBookVariant(bookVariantId);
+        AvailabilityStatus availabilityStatus = bookVariant.getAvailabilityStatus();
+        if (availabilityStatus == AvailabilityStatus.UNAVAILABLE) {
+            throw new BookVariantNotAvailableException(bookVariant.getId().getBookId(),
+                bookVariant.getId().getBookType(), bookVariant.getAvailabilityStatus());
+        }
+
+        if (availabilityStatus == AvailabilityStatus.ON_ORDER) {
+            return;
+        }
+
+        BookType bookType = bookVariant.getId().getBookType();
+        if (bookType == BookType.HARDCOVER_BOOK || bookType == BookType.PAPER_BOOK) {
+            if (availabilityStatus == AvailabilityStatus.IN_STOCK) {
+                int requestedQuantity = cartItem.getQuantity();
+                int currentQuantity = bookVariant.getPaperBookProperties().getQuantityInStock();
+                if (requestedQuantity > currentQuantity) {
+                    throw new BookVariantNotAvailableException(bookVariant.getId().getBookId(),
+                        bookVariant.getId().getBookType(), bookVariant.getAvailabilityStatus(), currentQuantity);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void updateBookVariantAfterAddToOrder(BookVariantId bookVariantId, CartItem cartItem) {
+        BookVariant bookVariant = getBookVariant(bookVariantId);
+
+        if (bookVariant.getAvailabilityStatus() == AvailabilityStatus.ON_ORDER) {
+            return;
+        }
+
+        if (bookVariant.getAvailabilityStatus() == AvailabilityStatus.IN_STOCK) {
+            if (bookVariant.getId().getBookType() == BookType.HARDCOVER_BOOK
+                || bookVariant.getId().getBookType() == BookType.PAPER_BOOK) {
+                int currentQuantity = bookVariant.getPaperBookProperties().getQuantityInStock();
+                int newQuantity = currentQuantity - cartItem.getQuantity();
+
+                if (newQuantity < 0) {
+                    throw new IllegalStateException("Quantity of books in stock can't be negative");
+                }
+
+                bookVariant.getPaperBookProperties().setQuantityInStock(newQuantity);
+            }
+        }
     }
 
     private BookVariant addRelatedBook(BookVariant bookVariant) {
