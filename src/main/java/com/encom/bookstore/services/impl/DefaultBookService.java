@@ -115,7 +115,11 @@ public class DefaultBookService implements BookService {
     private Specification<Book> parseFilterDtoToSpecification(BookFilterDto bookFilterDto) {
         Specification<Book> spec = Specification
             .where((root, query, cb) -> cb.conjunction());
+
         if (bookFilterDto == null) {
+            if (SecurityUtils.userHasRole(UserRole.ROLE_USER.name())) {
+                spec = spec.and(BookSpecifications.isDeleted(false));
+            }
             return spec;
         }
 
