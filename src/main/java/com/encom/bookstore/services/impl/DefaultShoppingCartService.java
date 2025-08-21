@@ -5,14 +5,10 @@ import com.encom.bookstore.dto.CartItemResponseDto;
 import com.encom.bookstore.dto.ShoppingCartResponseDto;
 import com.encom.bookstore.dto.ShoppingCartTotalPriceDto;
 import com.encom.bookstore.dto.ShoppingCartTotalTypesDto;
-import com.encom.bookstore.exceptions.BookVariantNotAvailableException;
 import com.encom.bookstore.exceptions.CartAlreadyContainsItemException;
 import com.encom.bookstore.exceptions.CartNotContainsItemException;
 import com.encom.bookstore.mappers.CartItemMapper;
 import com.encom.bookstore.mappers.ShoppingCartMapper;
-import com.encom.bookstore.model.AvailabilityStatus;
-import com.encom.bookstore.model.BookType;
-import com.encom.bookstore.model.BookVariant;
 import com.encom.bookstore.model.BookVariantId;
 import com.encom.bookstore.model.CartItem;
 import com.encom.bookstore.services.BookVariantService;
@@ -65,7 +61,8 @@ public class DefaultShoppingCartService implements ShoppingCartService {
             throw new CartAlreadyContainsItemException(cartItem.getBookId(), cartItem.getBookType());
         }
 
-        checkBookVariantAvailability(cartItem);
+        BookVariantId bookVariantId = new BookVariantId(cartItem.getBookId(), cartItem.getBookType());
+        bookVariantService.checkBookVariantAvailability(bookVariantId, cartItem);
 
         shoppingCart.addItem(cartItem);
 
@@ -80,7 +77,8 @@ public class DefaultShoppingCartService implements ShoppingCartService {
             throw new CartNotContainsItemException(cartItem.getBookId(), cartItem.getBookType());
         }
 
-        checkBookVariantAvailability(cartItem);
+        BookVariantId bookVariantId = new BookVariantId(cartItem.getBookId(), cartItem.getBookType());
+        bookVariantService.checkBookVariantAvailability(bookVariantId, cartItem);
 
         shoppingCart.updateItem(cartItem);
 
@@ -98,30 +96,8 @@ public class DefaultShoppingCartService implements ShoppingCartService {
         shoppingCart.removeItem(cartItem);
     }
 
-    private void checkBookVariantAvailability(CartItem cartItem) {
-        BookVariantId bookVariantId = new BookVariantId(cartItem.getBookId(), cartItem.getBookType());
-        BookVariant bookVariant = bookVariantService.getBookVariant(bookVariantId);
-
-        AvailabilityStatus availabilityStatus = bookVariant.getAvailabilityStatus();
-        if (availabilityStatus == AvailabilityStatus.UNAVAILABLE) {
-            throw new BookVariantNotAvailableException(bookVariant.getId().getBookId(),
-                bookVariant.getId().getBookType(), bookVariant.getAvailabilityStatus());
-        }
-
-        if (availabilityStatus == AvailabilityStatus.ON_ORDER) {
-            return;
-        }
-
-        BookType bookType = bookVariant.getId().getBookType();
-        if (bookType == BookType.HARDCOVER_BOOK || bookType == BookType.PAPER_BOOK) {
-            if (availabilityStatus == AvailabilityStatus.IN_STOCK) {
-                int requestedQuantity = cartItem.getQuantity();
-                int currentQuantity = bookVariant.getPaperBookProperties().getQuantityInStock();
-                if (requestedQuantity > currentQuantity) {
-                    throw new BookVariantNotAvailableException(bookVariant.getId().getBookId(),
-                        bookVariant.getId().getBookType(), bookVariant.getAvailabilityStatus(), currentQuantity);
-                }
-            }
-        }
+    @Override
+    public ShoppingCart retrieveShoppingCart() {
+        return shoppingCart;
     }
 }

@@ -5,6 +5,7 @@ import com.encom.bookstore.dto.CartItemResponseDto;
 import com.encom.bookstore.dto.ShoppingCartResponseDto;
 import com.encom.bookstore.dto.ShoppingCartTotalPriceDto;
 import com.encom.bookstore.dto.ShoppingCartTotalTypesDto;
+import com.encom.bookstore.sessions.ShoppingCart;
 
 public interface ShoppingCartService {
 
@@ -21,4 +22,6 @@ public interface ShoppingCartService {
     void clearCart();
 
     void removeCartItem(CartItemRequestDto cartItemRequestDto);
+
+    ShoppingCart retrieveShoppingCart();
 }
