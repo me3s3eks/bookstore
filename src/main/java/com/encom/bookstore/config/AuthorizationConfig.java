@@ -111,7 +111,7 @@ public class AuthorizationConfig {
                 .authenticated();
         });
 
-        //Setting authorization for delivery address's endpoints
+        //Setting authorization for delivery address' endpoints
         http.authorizeHttpRequests(c -> {
             c.requestMatchers(HttpMethod.POST, "/accounts/users/delivery-addresses")
                 .authenticated();
@@ -120,6 +120,20 @@ public class AuthorizationConfig {
             c.requestMatchers(HttpMethod.PUT, "/accounts/users/delivery-addresses/{addressId}")
                 .authenticated();
             c.requestMatchers(HttpMethod.DELETE, "/accounts/users/delivery-addresses/{addressId}")
+                .authenticated();
+        });
+
+        //Setting authorization for delivery orders' endpoints
+        http.authorizeHttpRequests(c -> {
+            c.requestMatchers(HttpMethod.POST, "/orders")
+                .authenticated();
+            c.requestMatchers(HttpMethod.GET, "/orders")
+                .authenticated();
+            c.requestMatchers(HttpMethod.GET, "/orders/{orderId}")
+                .authenticated();
+            c.requestMatchers(HttpMethod.GET, "/orders/{orderId}/items")
+                .authenticated();
+            c.requestMatchers(HttpMethod.PUT, "/orders/{orderId}")
                 .authenticated();
         });
 
