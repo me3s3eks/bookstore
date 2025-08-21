@@ -4,10 +4,12 @@ import com.encom.bookstore.exceptions.BookVariantNotAvailableException;
 import com.encom.bookstore.exceptions.CartAlreadyContainsItemException;
 import com.encom.bookstore.exceptions.CartNotContainsItemException;
 import com.encom.bookstore.exceptions.DeliveryAddressAlreadyExistsException;
+import com.encom.bookstore.exceptions.EmptyShoppingCartException;
 import com.encom.bookstore.exceptions.EntityAlreadyExistsException;
 import com.encom.bookstore.exceptions.EntityNotFoundException;
 import com.encom.bookstore.exceptions.ForeignKeyDeleteConstraintException;
 import com.encom.bookstore.exceptions.InvalidRequestDataException;
+import com.encom.bookstore.exceptions.UnavailablePaymentMethodException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -78,7 +80,7 @@ public class RestControllerExceptionHandler {
         MethodArgumentTypeMismatchException e,
         Locale locale) {
         String localizedMessage = messageSource.getMessage("errors.error.400." +
-            "method_argument_type_mismatch",
+                "method_argument_type_mismatch",
             new Object[]{e.getName(), e.getRequiredType()}, "errors.error.400.default", locale);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, localizedMessage);
         return ResponseEntity.badRequest().body(problemDetail);
@@ -118,8 +120,8 @@ public class RestControllerExceptionHandler {
     public ResponseEntity<ProblemDetail> handleCartNotContainsItemException(CartNotContainsItemException e,
                                                                             Locale locale) {
         String localizedMessage = messageSource.getMessage("errors.error.404.cart_not_contains_item",
-            null, "errors.error.409.default", locale);
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, localizedMessage);
+            null, "errors.error.404.default", locale);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, localizedMessage);
         problemDetail.setProperty("bookId", e.getBookId());
         problemDetail.setProperty("bookType", e.getBookType());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
@@ -129,8 +131,8 @@ public class RestControllerExceptionHandler {
     public ResponseEntity<ProblemDetail> handleBookVariantNotAvailableException(BookVariantNotAvailableException e,
                                                                                 Locale locale) {
         String localizedMessage = messageSource.getMessage("errors.error.400.book_variant_not_available",
-            null, "errors.error.409.default", locale);
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, localizedMessage);
+            null, "errors.error.400.default", locale);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, localizedMessage);
         problemDetail.setProperty("bookId", e.getBookId());
         problemDetail.setProperty("bookType", e.getBookType());
         problemDetail.setProperty("availabilityStatus", e.getAvailabilityStatus());
@@ -149,4 +151,27 @@ public class RestControllerExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, localizedMessage);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }
+
+    @ExceptionHandler(EmptyShoppingCartException.class)
+    public ResponseEntity<ProblemDetail> handleEmptyShoppingCartException(EmptyShoppingCartException e,
+                                                                          Locale locale) {
+        String localizedMessage = messageSource.getMessage("errors.error.400.empty_shopping_cart",
+            null, "errors.error.400.default", locale);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, localizedMessage);
+        problemDetail.setProperty("message", e.getMessage());
+
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler(UnavailablePaymentMethodException.class)
+    public ResponseEntity<ProblemDetail> handleUnavailablePaymentMethodException(UnavailablePaymentMethodException e,
+                                                                                 Locale locale) {
+        String localizedMessage = messageSource.getMessage("errors.error.400.unavailable_payment_method",
+            null, "errors.error.400.default", locale);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, localizedMessage);
+        problemDetail.setProperty("receivingMethod", e.getReceivingMethod());
+
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
 }
